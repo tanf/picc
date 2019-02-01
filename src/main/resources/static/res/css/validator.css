@@ -1,0 +1,63 @@
+.box001{float:left; color: #000;width:210px;height:15px; background: #FFEBD7 url(../img/onFocus.gif) no-repeat left ; border: 1px solid #FFA953; padding:0px 3px 0px 23px;}
+.box002{float:left;;color: #000;width:210px;height:15px;background:url(../img/onCorrect.gif) no-repeat left;padding:0px 3px 0px 23px;}
+.box003{float:left;width:210px;color: #000;height:15px;background: #FFECEC url(../img/onError.gif) no-repeat left ; border: 1px solid #FF8888;padding:0px 3px 0px 23px;}
+.box004{float:left;width:210px;color: #000;height:15px;padding:6px;}
+
+.onShow
+{
+    background:url(../img/onShow.gif) no-repeat; 
+    padding-left:25px; 
+	font-size: 12px;
+	line-height:22px; 
+	vertical-align:middle;
+}
+.onFocus
+{
+    background:#E9F0FF url(../img/onFocus.gif) no-repeat; 
+    padding-left:25px; 
+	font-size: 12px;
+	line-height:22px; 
+	vertical-align:middle;
+}
+.onNotice
+{
+    background:#E9F0FF url(../img/onFocus.gif) no-repeat; 
+    padding-left:25px; 
+	font-size: 12px;
+	color:Orange;
+	line-height:22px; 
+	vertical-align:middle;
+}
+.onError
+{
+    background:#FFF2E9 url(../img/onError.gif) no-repeat;
+    padding-left:25px;
+	font-size: 12px;
+	line-height:22px; 
+	vertical-align:middle;
+}
+.onError_spec
+{
+    background:#FFF2E9 url(../img/onError.gif) no-repeat;
+    padding-left:25px;
+	font-size: 15px;
+	color:Purple;
+	line-height:22px; 
+	vertical-align:middle;
+}
+.onCorrect
+{
+    background:#E9FFEB url(../img/onCorrect.gif) no-repeat;
+    padding-left:25px;
+	font-size: 12px;
+	line-height:22px; 
+	vertical-align:middle;
+}
+.onLoad
+{
+    background:#E9FFEB url(../img/onLoad.gif) no-repeat 3px 3px;
+    padding-left:25px;
+	font-size: 12px;
+	line-height:22px; 
+	vertical-align:middle;
+} 

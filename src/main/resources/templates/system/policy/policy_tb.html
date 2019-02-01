@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>sample</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/message.css"/>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        tr.stop td {
+            color: #ccc !important;
+        }
+
+        tr.stop a {
+            color: #88bbff !important;
+        }
+    </style>
+</head>
+<body style="background-color: #fff; padding: 0;">
+<table width="100%" class="table-hover">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>保单号</th>
+        <th>单证流水号</th>
+        <th>产品</th>
+        <th>姓名</th>
+
+        <th>投保时间</th>
+        <th width="120">状态</th>
+
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody align="center">
+    <div th:if="${policys}!=null" th:each="policy:${policys}">
+        <tr th:if="${policy.status}==1">
+            <td align="center" th:text="${policy.id}">
+                ${policy.id}
+            </td>
+            <td th:text="${policy.policyCode}">${policy.policyCode}</td>
+            <td th:text="${policy.documentNum}">${policy.documentNum}</td>
+            <td th:text="${policy.product.name}">${policy.product.name}</td>
+            <td th:text="${policy.policyHolder.name}">${policy.policyHolder.name}</td>
+            <td th:text="${#dates.format(policy.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:id="'time'+${policy.id}" id="time${policy.id}" style="display: none;"
+                th:text="${#dates.format(policy.beginTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:if="${policy.status}==0">已退保</td>
+            <td th:if="${policy.status}==1">正常</td>
+            <td th:id="'operation'+${policy.id}" id="operation${policy.id}">
+                <a th:if="${policy.status}==1" th:href="@{'javascript:cancel('+${policy.id}+');'}"
+                   href="javascript:cancel(${policy.id});">退保&nbsp;&nbsp;</a>
+            </td>
+        </tr>
+        <tr th:if="${policy.status}==0" class="stop">
+            <td align="center" th:text="${policy.id}">
+                ${policy.id}
+            </td>
+            <td th:text="${policy.policyCode}">${policy.policyCode}</td>
+            <td th:text="${policy.documentNum}">${policy.documentNum}</td>
+            <td th:text="${policy.product.name}">${policy.product.name}</td>
+            <td th:text="${policy.policyHolder.name}">${policy.policyHolder.name}</td>
+            <td th:text="${#dates.format(policy.createTime,'yyyy-MM-dd HH:mm:ss')}">
+            </td>
+            <td th:if="${policy.status}==0">已退保</td>
+            <td th:if="${policy.status}==1">正常</td>
+            <td>
+                <span th:if="${policy.status}==0">已退保</span>
+            </td>
+        </tr>
+        </c:if>
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+            var status = [[${policy.status}]];
+            var id = [[${policy.id}]];
+            if (status == '1') {
+                var td = document.querySelector("#operation" + id);
+                var beginTimeStr = document.querySelector("#time" + id).innerText;
+                var beginTime = Date.parse(beginTimeStr.replace(/-/g, "/"));
+                var nowTime = new Date();
+                if (beginTime <= nowTime) {
+                    td.innerText = "已过退保时间";
+                }
+            }
+            /*]]>*/
+        </script>
+    </div>
+    <div th:if="${policys} ==null">
+        <tr>
+            <td colspan="10" height="150px">无符合查询条件记录！</td>
+        </tr>
+    </div>
+    </tbody>
+</table>
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/res/js/message.js"></script>
+
+<script type="text/javaScript">
+
+    function cancel(ur) {
+        if (window.confirm("是否确认退保?")) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/system/policy/cancelPolicy",
+                data: {"policyId": ur},
+                success: function (msg) {
+                    if (msg != null) {
+                        if (msg.result == true) {
+                            parent.location.href = "system/policy/policy.html?tip=退保成功";
+                        } else {
+                            $.message({
+                                message: msg.tip,
+                                type: 'info',
+                                time: 3000,
+                                showClose: true
+                            });
+                        }
+                    } else {
+                        $.message({
+                            message: "未知错误",
+                            type: 'error',
+                            time: 3000,
+                            showClose: true
+                        });
+                    }
+                },
+                error: function () {
+                    $.message({
+                        message: "系统繁忙，请稍后再试",
+                        type: 'error',
+                        time: 3000,
+                        showClose: true
+                    });
+                }
+            });
+        }
+    }
+
+    /*function openwindow(url, name, iWidth, iHeight) {
+        var url; //转向网页的地址;
+        var name; //网页名称，可为空;
+        var iWidth; //弹出窗口的宽度;
+        var iHeight; //弹出窗口的高度;
+        var iTop = (window.screen.availHeight - 30 - iHeight) / 2; //获得窗口的垂直位置;
+        var iLeft = (window.screen.availWidth - 10 - iWidth) / 2; //获得窗口的水平位置;
+        window
+                .open(
+                        url,
+                        name,
+                        'height='
+                                + iHeight
+                                + ',,innerHeight='
+                                + iHeight
+                                + ',width='
+                                + iWidth
+                                + ',innerWidth='
+                                + iWidth
+                                + ',top='
+                                + iTop
+                                + ',left='
+                                + iLeft
+                                + ',toolbar=no,menubar=no,scrollbars=auto,resizeable=no,location=no,status=no');
+    };
+
+    function cancell(id, poli_no) {
+        var polino = poli_no;
+        var newid = id;
+        if (window.confirm("是否确认退保！")) {
+            $.ajax({
+                type : "POST",
+                url : "policy/cancellPoli.action",
+                data : "policyNo=" + poli_no,
+                success : function(msg) {
+                    if (msg == "false") {
+                        alert("保单号所对应的数据不存在！");
+                    } else {
+                        alert("退保成功！");
+                        $("#" + newid + "").text("退保");
+                    }
+                }
+            });
+        }
+    };*/
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>产品管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/message.css"/>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+
+    <style>
+        select {
+            width: 102px;
+        }
+    </style>
+</head>
+
+<body onload="IFrameResize('ifm')" class="body-bg"
+      style="padding-right: 20px;">
+<div id="container-fluid">
+    <div class="ie6-out">
+        <div class="ie6-in">
+            <div id="content">
+                <div id="box">
+                    <h3 id="adduser">产品查询</h3>
+                    <form id="form" th:action="@{/system/product/queryProductByCondition}"
+                          action="${pageContext.servletContext.contextPath }/system/product.action?method=queryProductByCondition"
+                          method="post" target="showInfo">
+                        <table class="form">
+                            <tr>
+                                <td style="border: 0" colspan="2">
+                                    产品状态:&nbsp;&nbsp;
+                                    <select name="product.projectStatus">
+                                        <option value="">--请选择--</option>
+                                        <option value="1">使用中</option>
+                                        <option value="0">已下架</option>
+                                    </select>
+
+                                    <span style="margin-left: 50px"></span>
+                                    产品名称:&nbsp;&nbsp;
+                                    <input style="margin-left: 2px" maxlength="14" name="product.projectName"
+                                           id="lastname" type="text" tabindex="1"/>
+                                    <span style="margin-left: 50px"></span>
+                                    产&nbsp;品&nbsp;&nbsp;编&nbsp;&nbsp;码:&nbsp;
+                                    <input maxlength="14" name="product.projectCode" id="lastname" type="text"
+                                           style="margin-left: 2px" tabindex="1"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: 0">
+                                    险种名称:&nbsp;
+                                    <select name="product.insurance.id">
+                                        <div th:if="${productTypes}!=null">
+                                            <option value="">--请选择--</option>
+                                            <option th:each="type:${productTypes}" th:value="${type.id}"
+                                                    th:text="${type.name}" value="${type.id}">${type.name}
+                                            </option>
+                                        </div>
+                                    </select>
+                                    <span style="margin-left: 50px"></span>&nbsp;保&nbsp;险&nbsp;&nbsp;费&nbsp;:&nbsp;
+                                    <select name="product.totalPremium">
+                                        <div th:if="${products}!=null">
+                                            <option value="">--请选择--</option>
+                                            <option th:each="product:${products}" th:value="${product.premium}"
+                                                    th:text="${product.premium}" value="${product.premium}">
+                                                ${product.premium}
+                                            </option>
+                                        </div>
+                                    </select>
+                                    <span style="margin-left: 50px"></span>产品期限(天):&nbsp;
+                                    <input maxlength="14" name="product.productPeriod" id="lastname2" type="text"
+                                           style="margin-left: 2px" tabindex="1"/>
+                                </td>
+
+
+                                <td style="border: 0" align="right">
+                                    <button type="reset" class="btn btn-small"
+                                            style="margin-bottom:5px;">重置
+                                    </button>
+                                    <button onclick="check();" type="submit" class="btn btn-info btn-small"
+
+                                            style="margin-bottom:5px;">查询
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                    <ul class="action">
+                        <li><a href="javascript:addProduct();">添加产品</a>
+                        </li>
+                    </ul>
+                    <div class="row-fluid">
+                        <iframe th:src="@{/system/product/queryProductByCondition}"
+                                src="${pageContext.servletContext.contextPath }/system/product.action?method=queryProductByCondition"
+                                frameborder="0"
+                                marginheight="0" marginwidth="0" scrolling="no"
+                                id="showInfo" name="showInfo"
+                                onload="javascript:IFrameResize('showInfo');" width="99%">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/res/js/bootstrap.min.js"></script>
+<!--[if lte IE 6]>
+<script type="text/javascript" src="/static/res/js/bootstrap-ie.js"></script>
+<![endif]-->
+<!-- IFrame高度自适应 -->
+<script type="text/javascript" src="/static/res/js/iframeAutoSize.js"></script>
+<script type="text/javascript" src="/static/res/js/message.js"></script>
+<script type="text/javascript">
+    function addProduct() {
+        window.location.href = "/system/product/toAddProduct";
+    }
+
+    function check() {
+        //if(isNaN($('#lastname1').val())){
+        //	alert("产品ID必须为数字！");
+        //	$('#lastname1').attr('value',null);
+        //}
+        if (isNaN($('#lastname2').val())) {
+            alert("产品期限必须为数字，单位为天！");
+            $('#lastname2').attr('value', null);
+        }
+    }
+</script>
+<script type="text/javascript" th:inline="javascript" th:if="${param.tip}!=null">
+    /*<![CDATA[*/
+    var msg = [[${param.tip}]];
+    /*]]>*/
+    if (msg.indexOf("成功") > -1) {
+        $.message({
+            message: msg,
+            type: 'success',
+            time: 3000,
+            showClose: true
+        });
+    } else {
+        $.message({
+            message: msg,
+            type: 'info',
+            time: 3000,
+            showClose: true
+        });
+    }
+</script>
+<script type="text/javascript" th:if="${tip}!=null" th:inline="javascript">
+    /*<![CDATA[*/
+    var msg = [[${tip}]];
+    /*]]>*/
+    if (msg.indexOf("成功") > -1) {
+        $.message({
+            message: msg,
+            type: 'success',
+            time: 3000,
+            showClose: true
+        });
+    } else {
+        $.message({
+            message: msg,
+            type: 'info',
+            time: 3000,
+            showClose: true
+        });
+    }
+</script>
+</body>
+</html>

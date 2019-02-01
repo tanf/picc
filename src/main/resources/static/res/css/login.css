@@ -1,0 +1,36 @@
+body{
+	text-align: center;
+}
+
+.login-form {
+	position:relative;
+	margin:0 auto;
+	height: 240px;
+	width: 265px;
+	top: 120px;
+	border: 1px solid #c4c4c4;
+	background: #fff;
+}
+
+.login-form .table-login {
+	margin:0 0 10px 0;
+	padding: 20px 20px 0 20px;
+}
+
+.login-form .table-login tr {
+	height: 44px;
+}
+
+.login-form .login-button {
+	padding: 0 8px 8px 8px;
+}
+
+.body-bg {
+	background: url("../img/login-bg.jpg") no-repeat center;
+}
+
+.form-font{
+	font-size: 14px;
+	width:55px;
+	padding-left: 10px;
+}

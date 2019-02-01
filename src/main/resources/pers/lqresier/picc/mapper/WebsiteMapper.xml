@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.WebsiteMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.Website">
+        <id property="id" column="website_id"/>
+        <result property="marketingChannelCode" column="marketing_channel_code"/>
+        <result property="code" column="website_code"/>
+        <result property="name" column="website_name"/>
+        <result property="salemanPhone" column="saleman_phone"/>
+        <result property="salemanName" column="saleman_name"/>
+        <association property="organization" javaType="pers.lqresier.picc.entity.Organization">
+            <id property="id" column="organization_id"/>
+            <result property="name" column="organization_name"/>
+        </association>
+    </resultMap>
+    <sql id="baseColumns">
+        tb_website.website_id,tb_website.marketing_channel_code,tb_website.website_code,tb_website.website_name,tb_website.saleman_phone,tb_website.saleman_name
+    </sql>
+    <select id="queryAll" resultMap="baseResultMap">
+        select
+        <include refid="baseColumns"/>,tb_organization.organization_id,tb_organization.organization_name
+        from
+        tb_website,tb_organization
+        where
+        tb_website.organization_id=tb_organization.organization_id
+    </select>
+    <update id="update" parameterType="pers.lqresier.picc.entity.Website">
+        update tb_website
+        <set>
+            <if test="marketingChannelCode!=null">
+                marketing_channel_code=#{marketingChannelCode},
+            </if>
+            <if test="code!=null">
+                website_code=#{code},
+            </if>
+            <if test="name!=null">
+                website_name=#{name},
+            </if>
+            <if test="salemanPhone!=null">
+                saleman_phone=#{salemanPhone},
+            </if>
+            <if test="salemanName!=null">
+                saleman_name=#{salemanName},
+            </if>
+            <if test="organization.id!=null">
+                organization_id=#{organization.id},
+            </if>
+        </set>
+        where website_id=#{id}
+    </update>
+    <insert id="add" parameterType="pers.lqresier.picc.entity.Website">
+        insert into tb_website
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="marketingChannelCode!=null">
+                marketing_channel_code,
+            </if>
+            <if test="code!=null">
+                website_code,
+            </if>
+            <if test="name!=null">
+                website_name,
+            </if>
+            <if test="salemanPhone!=null">
+                saleman_phone,
+            </if>
+            <if test="salemanName!=null">
+                saleman_name,
+            </if>
+            <if test="organization.id!=null">
+                organization_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="marketingChannelCode!=null">
+                #{marketingChannelCode},
+            </if>
+            <if test="code!=null">
+                #{code},
+            </if>
+            <if test="name!=null">
+                #{name},
+            </if>
+            <if test="salemanPhone!=null">
+                #{salemanPhone},
+            </if>
+            <if test="salemanName!=null">
+                #{salemanName},
+            </if>
+            <if test="organization.id!=null">
+                #{organization.id},
+            </if>
+        </trim>
+    </insert>
+</mapper>

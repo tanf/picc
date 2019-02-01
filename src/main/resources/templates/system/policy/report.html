@@ -1,0 +1,177 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>保费图表</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/message.css"/>
+    <script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+    <!-- 引入 echarts.js -->
+    <script src="/static/res/echarts/echarts_4.1.0.rc2_echarts.min.js"></script>
+    <script type="text/javascript" src="/static/res/js/message.js"></script>
+    <style type="text/css">
+    	#main{
+    		margin: auto auto;
+    	}
+    	#chart1,#chart2{
+    		width: 50%;
+    		height:80%;
+    		float:left;
+    		margin: 5% 0;
+    	}
+    </style>
+</head>
+<body style="background: url('/static/res/img/background.png');">
+    <!-- 生成前30天保险销售数量的图表 -->
+    <div id="chart1"></div>
+    <div id="chart2"></div>
+    <script type="text/javascript">
+    	$.ajax({
+    		type:"post",
+    		dataType:"json",
+    		url:"/system/policy/get30Sales",
+    		success:function(msg){
+    			if(msg.length>0){
+    				 // 基于准备好的dom，初始化echarts实例
+    				 var dataArr=new Array();
+    				 for(var i=0;i<msg.length;i++){
+    					 dataArr[i]=msg[i];
+    				 }
+    				 var datetime=[];
+    				 var daymill=24*60*60*1000;//一天的毫秒数
+    				 var now=new Date();//当前时间
+    				 for(var i=30;i>=1;i--){
+    					 var date=new Date(now-daymill*i);
+    					 var year=date.getFullYear();
+    					 var month=date.getMonth()+1;
+    					 var day=date.getDate();
+    					 datetime[30-i]=year+"/"+month+"/"+day;
+    				 }
+    		        var myChart1 = echarts.init(document.getElementById('chart1'));
+    		        // 指定图表的配置项和数据
+    		        var option1 = {
+    		            title: {
+    		                text: '前30天保险销售图表信息',
+    		                x:'center',
+    		                textStyle:{
+    		                	fontSize:25,
+    		                }
+    		            },
+    		            tooltip: {
+    		            	trigger: 'axis'
+    		            },
+    		            legend: {
+    		            	right: 10,
+    		            	orient: 'vertical',
+    		                icon: 'circle',
+    		                align:'right'
+    		            },
+    		            xAxis: {
+    		            	name: '日期',
+    		                data:datetime
+    		            },
+    		            yAxis: {
+    		            	name:'销售额'
+    		            },
+    		            series: [{
+    		                name: '销售额',
+    		                type: 'line',
+    		                color:'#0088d4',
+    		                data: dataArr
+    		            }]
+    		        };
+    		        // 使用刚指定的配置项和数据显示图表。
+    		        myChart1.setOption(option1);
+    			}else{
+    				$.message({
+    					message:"表一暂无数据",
+    					type:'info',
+    					time:'3000',
+    					showClose:true
+    				});
+    			}
+    		},
+    		error:function(){
+    			$.message({
+					message:"抓取表一数据失败",
+					type:'info',
+					time:'3000',
+					showClose:true
+				});
+    		}
+    	});
+    	$.ajax({
+    		type:"POST",
+    		dataType:"json",
+    		url:"/system/policy/getUserSaleVOs",
+    		success:function(msg){
+    			if(msg.length>0){
+    				var legendData=new Array();
+    				var dataArr=new Array();
+    				for(var i=0;i<msg.length;i++){
+    					legendData[i]=msg[i].userName;
+    					dataArr[i]={};
+    					dataArr[i]['value']=msg[i].saleNum;
+    					dataArr[i]['name']=msg[i].userName;
+    				}
+    				var myChart2 = echarts.init(document.getElementById('chart2'));
+    		    	var option2={
+    		    		title:{
+    		    			text: '各出单员的销售情况统计图',
+    		                x:'center',
+    		                textStyle:{
+    		                	fontSize:25,
+    		                }
+    		    		},
+    		    		tooltip:{
+    		    			trigger: 'item'
+    		    		},
+    		    		legend: {
+    		    	        orient: 'vertical',
+    		    	        x: 'right',
+    		    	        data:legendData
+    		    	    },
+    		    	    series:[
+    		    	    	{
+    		    	    		name:'出单员',
+    		    	    		type:'pie',
+    		    	    		radius: ['50%', '70%'],
+    		    	    		avoidLabelOverlap: false,
+    		    	            label: {
+    		    	                normal: {
+    		    	                    show: false,
+    		    	                    position: 'center'
+    		    	                },
+    		    	                emphasis: {
+    		    	                    show: true,
+    		    	                    textStyle: {
+    		    	                        fontSize: '30',
+    		    	                        fontWeight: 'bold'
+    		    	                    }
+    		    	                }
+    		    	            },
+    		    	    		data:dataArr
+    		    	    	}
+    		    	    ]
+    		    	};
+    		    	myChart2.setOption(option2);
+    			}else{
+    				$.message({
+    					message:"表二暂无数据",
+    					type:'info',
+    					time:'3000',
+    					showClose:true
+    				});
+    			}
+    		},
+    		error:function(){
+    			$.message({
+					message:"抓取表二数据失败",
+					type:'info',
+					time:'3000',
+					showClose:true
+				});
+    		}
+    	});
+    </script>
+</body>
+</html>
+

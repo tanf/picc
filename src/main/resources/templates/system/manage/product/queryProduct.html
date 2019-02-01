@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html debug="true" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>sample</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        tr.stop td {
+            color: #ccc !important;
+        }
+
+        tr.stop a {
+            color: #88bbff !important;
+        }
+    </style>
+</head>
+
+<body style="background-color: #fff;padding: 0;">
+<table width="100%" class="table-hover">
+    <thead>
+    <tr>
+        <th>产品名称</th>
+        <th>产品编码</th>
+        <th>单证识别码</th>
+        <th>险种名称</th>
+        <th>产品期限(天)</th>
+        <th>保险金额(万)</th>
+        <th>保险费(元)</th>
+        <th>状态</th>
+        <th>操作</th>
+
+    </tr>
+    </thead>
+    <tbody align="center">
+    <div th:if="${products}!=null" th:each="product:${products}">
+        <tr th:if="${product.productStatus}==1">
+            <td th:text="${product.name}">${product.name}</td>
+            <td th:text="${product.code}">${product.code}</td>
+            <td th:text="${product.documentCode}">${product.documentCode}</td>
+            <td th:text="${product.type.name}">${product.type.name}</td>
+            <td th:text="${product.timeLimit}">${product.timeLimit}</td>
+            <td th:text="${product.coverage}">${product.coverage}</td>
+            <td th:text="${product.premium}">${product.premium}</td>
+            <td th:if="${product.productStatus}==0">已下架</td>
+            <td th:if="${product.productStatus}==1">使用中</td>
+            <td align="center">
+                <a th:href="${'javascript:upd('+product.id+')'}" href="javascript:upd(${product.id})">修改</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a th:if="${product.productStatus}==1"
+                   th:href="${'javascript:del('+product.id+','+product.name+');'}"
+                   href="javascript:del('${product.id}','${product.name}');">下架</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr class="stop" th:if="${product.productStatus}==0">
+            <td th:text="${product.name}">${product.name}</td>
+            <td th:text="${product.code}">${product.code}</td>
+            <td th:text="${product.documentCode}">${product.documentCode}</td>
+            <td th:text="${product.type.name}">${product.type.name}</td>
+            <td th:text="${product.timeLimit}">${product.timeLimit}</td>
+            <td th:text="${product.coverage}">${product.coverage}</td>
+            <td th:text="${product.premium}">${product.premium}</td>
+            <td th:if="${product.productStatus}==0">已下架</td>
+            <td th:if="${product.productStatus}==1">使用中</td>
+            <td align="center">
+                <a th:href="${'javascript:upd('+product.id+')'}" href="javascript:upd(${product.id})">修改</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a th:if="${product.productStatus}==1"
+                   th:href="${'javascript:put('+product.id+','+product.name+');'}"
+                   href="javascript:put('${product.id}','${product.name}');">上架</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+    </div>
+    <div th:if="${products}==null">
+        <tr>
+            <td colspan="9" height="150px">无符合查询条件记录！</td>
+        </tr>
+    </div>
+
+    </tbody>
+</table>
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js">
+</script>
+<script type="text/javascript" src="/static/res/js/user.js">
+</script>
+<script>
+    function del(ur, name) {
+        if (confirm("确认要下架？")) {
+            parent.location.href = "/system/product/deleteProduct?id=" + ur + "&namevo=" + encodeURI(name);
+        }
+    }
+
+    function upd(ur) {
+        parent.location.href = "/system/product/toUpdateProduct?id=" + ur;
+    }
+
+    function put(ur, name) {
+        parent.location.href = "/system/product/putAwayProduct?id=" + ur + "&namevo=" + encodeURI(name);
+    }
+
+</script>
+</body>
+</html>

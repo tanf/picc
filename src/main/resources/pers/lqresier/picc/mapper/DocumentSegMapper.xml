@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.DocumentSegMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.DocumentSeg">
+        <id property="id" column="seg_id"/>
+        <result property="documentCode" column="document_code"/>
+        <result property="beginNum" column="seg_begin_num"/>
+        <result property="endNum" column="seg_end_num"/>
+        <result property="allotNum" column="seg_allot_num"/>
+        <result property="status" column="seg_status"/>
+        <result property="createTime" column="seg_create_time"/>
+        <association property="allocator" javaType="pers.lqresier.picc.entity.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="user_username"/>
+            <result property="name" column="user_name"/>
+            <result property="role" column="user_role"/>
+            <result property="createTime" column="user_create_time"/>
+            <result property="status" column="user_status"/>
+        </association>
+    </resultMap>
+    <sql id="columns">
+        tb_document_num_seg.seg_id,tb_document_num_seg.document_code,tb_document_num_seg.seg_begin_num,tb_document_num_seg.seg_end_num,tb_document_num_seg.seg_allot_num,tb_document_num_seg.seg_status,tb_document_num_seg.seg_create_time
+    </sql>
+    <select id="queryByCondition" parameterType="pers.lqresier.picc.condition.DocumentSegCondition" resultMap="baseResultMap">
+        select
+        <include refid="columns"/>,tb_user.user_id,tb_user.user_username,tb_user.user_name,tb_user.user_role,tb_user.user_create_time,tb_user.user_status
+        from
+        tb_document_num_seg,tb_user
+        <trim prefix="where " suffixOverrides="and|or">
+            tb_document_num_seg.seg_allocator_id=tb_user.user_id and
+            <if test="status!=null">
+                tb_document_num_seg.seg_status=#{status} and
+            </if>
+            <if test="beginTime!=null">
+                tb_document_num_seg.seg_create_time>#{beginTime} and
+            </if>
+            <if test="endTime!=null">
+                #{endTime}>tb_document_num_seg.seg_create_time and
+            </if>
+        </trim>
+        order by tb_document_num_seg.seg_create_time desc
+    </select>
+
+    <select id="isDocumentSegExist" resultType="int">
+        select count(1) as countNum from tb_document_num_seg where (seg_begin_num >=#{begin}+0 and #{end}+0>=seg_begin_num) or (#{begin}+0>=seg_begin_num and seg_end_num>=#{end}+0) or (seg_end_num >=#{begin}+0 and #{end}+0>=seg_end_num)
+    </select>
+
+    <select id="queryAll" resultMap="baseResultMap">
+        select
+        <include refid="columns"/>
+        from
+        tb_document_num_seg
+    </select>
+
+    <insert id="add" parameterType="documentSeg">
+        insert into tb_document_num_seg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="documentCode!=null">
+                document_code,
+            </if>
+            <if test="beginNum!=null">
+                seg_begin_num,
+            </if>
+            <if test="endNum!=null">
+                seg_end_num,
+            </if>
+            <if test="allotNum!=null">
+                seg_allot_num,
+            </if>
+            <if test="status!=null">
+                seg_status,
+            </if>
+            <if test="createTime!=null">
+                seg_create_time,
+            </if>
+            <if test="allocator.id!=null">
+                seg_allocator_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="documentCode!=null">
+                #{documentCode},
+            </if>
+            <if test="beginNum!=null">
+                #{beginNum},
+            </if>
+            <if test="endNum!=null">
+                #{endNum},
+            </if>
+            <if test="allotNum!=null">
+                #{allotNum},
+            </if>
+            <if test="status!=null">
+                #{status},
+            </if>
+            <if test="createTime!=null">
+                #{createTime},
+            </if>
+            <if test="allocator.id!=null">
+                #{allocator.id},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="query" parameterType="documentSeg" resultMap="baseResultMap">
+        select
+        <include refid="columns"/>
+        from
+        tb_document_num_seg
+        where
+        tb_document_num_seg.seg_id=#{id}
+    </select>
+
+    <update id="update" parameterType="documentSeg">
+        update tb_document_num_seg
+        <set>
+            <if test="documentCode!=null">
+                document_code=#{documentCode},
+            </if>
+            <if test="beginNum!=null">
+                seg_begin_num=#{beginNum},
+            </if>
+            <if test="endNum!=null">
+                seg_end_num=#{endNum},
+            </if>
+            <if test="allotNum!=null">
+                seg_allot_num=#{allotNum},
+            </if>
+            <if test="status!=null">
+                seg_status=#{status},
+            </if>
+            <if test="createTime!=null">
+                seg_create_time=#{createTime},
+            </if>
+            <if test="allocator.id!=null">
+                seg_allocator_id=#{allocator.id},
+            </if>
+        </set>
+        where seg_id=#{id}
+    </update>
+</mapper>

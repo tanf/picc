@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+    <style>
+        html {
+            overflow-y: hidden;
+        }
+
+        body {
+            height: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        img {
+            max-width: auto;
+        }
+
+        .bg-total {
+            background-color: #f3f9ff;
+        }
+
+        table tr td {
+            padding-left: 10px;
+            white-space: nowrap;
+        }
+
+        #tb1 {
+            float: left;
+            width: 45%;
+            margin: 2%;
+        }
+
+        #tb2 {
+            float: left;
+            width: 45%;
+            margin: 2%;
+        }
+
+    </style>
+</head>
+
+<body style="background-color: #fff;">
+<div>
+
+    <table id="tb1">
+        <caption style="font-size:16px;color:#375b91;font-weight:800">本月情况</caption>
+        <thead>
+
+        <tr>
+            <th>时间</th>
+            <th>用户</th>
+            <th>已使用</th>
+            <th>作废</th>
+            <th>停用</th>
+            <th>丢失</th>
+        </tr>
+        </thead>
+        <tbody align="center">
+        <div th:if="${day}!=null">
+            <tr th:each="day:${day}">
+                <td align="center" th:text="${day.date}">${day.date}</td>
+                <td align="center" th:text="${day.name}">${day.name}</td>
+                <td align="center" th:text="${day.used}">${day.used}</td>
+                <td align="center" th:text="${day.disuse}">${day.disuse}</td>
+                <td align="center" th:text="${day.invalid}">${day.invalid}</td>
+                <td align="center" th:text="${day.lost}">${day.lost}</td>
+            </tr>
+        </div>
+        <div th:if="${day}==null">
+            <tr th:each="month:${month}">
+                <td align="center" th:text="${month.date}">${month.date}</td>
+                <td align="center" th:text="${month.name}">${month.name}</td>
+                <td align="center" th:text="${month.used}">${month.used}</td>
+                <td align="center" th:text="${month.disuse}">${month.disuse}</td>
+                <td align="center" th:text="${month.invalid}">${month.invalid}</td>
+                <td align="center" th:text="${month.lost}">${month.lost}</td>
+            </tr>
+        </div>
+            <!-- <tr>
+                <td colspan="6" id="mon">无符合查询条件记录！,已为你显示本月的使用情况</td>
+            </tr>-->
+
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="bg-total" colspan="2" style="font-weight:700;font-size:14px;">合计</td>
+
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+        </tr>
+        </tfoot>
+    </table>
+    <table id="tb2">
+        <caption style="font-size:16px;color:#375b91;font-weight:800">本年情况</caption>
+        <thead>
+
+        <tr>
+            <th>时间</th>
+            <th>用户</th>
+
+            <th>已使用</th>
+            <th>作废</th>
+            <th>停用</th>
+            <th>丢失</th>
+        </tr>
+        </thead>
+        <tbody align="center">
+        <div th:if="${day}!=null">
+            <tr th:each="day:${day}">
+                <td align="center" th:text="${day.date}">${day.date}</td>
+                <td align="center" th:text="${day.name}">${day.name}</td>
+                <td align="center" th:text="${day.used}">${day.used}</td>
+                <td align="center" th:text="${day.disuse}">${day.disuse}</td>
+                <td align="center" th:text="${day.invalid}">${day.invalid}</td>
+                <td align="center" th:text="${day.lost}">${day.lost}</td>
+            </tr>
+        </div>
+        <div th:if="${day}==null">
+            <tr th:each="year:${year}">
+                <td align="center" th:text="${year.date}">${year.date}</td>
+                <td align="center" th:text="${year.name}">${year.name}</td>
+                <td align="center" th:text="${year.used}">${year.used}</td>
+                <td align="center" th:text="${year.disuse}">${year.disuse}</td>
+                <td align="center" th:text="${year.invalid}">${year.invalid}</td>
+                <td align="center" th:text="${year.lost}">${year.lost}</td>
+            </tr>
+        </div>
+
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="bg-total" colspan="2" style="font-weight:700;font-size:14px;">合计</td>
+
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+            <td align="center" class="bg-total" style="font-weight:700;font-size:14px;"></td>
+        </tr>
+        </tfoot>
+    </table>
+    <div style="clear:both"></div>
+</div>
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+
+
+    $(function () {
+        var tableId = document.getElementById("tb1");
+        var tableId2 = document.getElementById("tb2");
+        var usedVal = 0;
+        var disueVal = 0;
+        var invalidVal = 0;
+        var lostVal = 0;
+        for (var i = 1; i < tableId.rows.length - 1; i++) {
+
+            usedVal += Number(tableId.rows[i].cells[2].innerText);
+            disueVal += Number(tableId.rows[i].cells[3].innerText);
+            invalidVal += Number(tableId.rows[i].cells[4].innerText);
+            lostVal += Number(tableId.rows[i].cells[5].innerText);
+        }
+
+
+        tableId.rows[tableId.rows.length - 1].cells[1].innerText = usedVal;
+        tableId.rows[tableId.rows.length - 1].cells[2].innerText = disueVal;
+        tableId.rows[tableId.rows.length - 1].cells[3].innerText = invalidVal;
+        tableId.rows[tableId.rows.length - 1].cells[4].innerText = lostVal;
+
+
+        var usedVal2 = 0;
+        var disueVal2 = 0;
+        var invalidVal2 = 0;
+        var lostVal2 = 0;
+        for (var i = 1; i < tableId.rows.length - 1; i++) {
+            usedVal2 += Number(tableId2.rows[i].cells[2].innerText);
+            disueVal2 += Number(tableId2.rows[i].cells[3].innerText);
+            invalidVal2 += Number(tableId2.rows[i].cells[4].innerText);
+            lostVal2 += Number(tableId2.rows[i].cells[5].innerText);
+        }
+        tableId2.rows[tableId2.rows.length - 1].cells[1].innerText = usedVal2;
+        tableId2.rows[tableId2.rows.length - 1].cells[2].innerText = disueVal2;
+        tableId2.rows[tableId2.rows.length - 1].cells[3].innerText = invalidVal2;
+        tableId2.rows[tableId2.rows.length - 1].cells[4].innerText = lostVal2;
+
+    })
+
+
+    /* 		$(function() {
+     var s = $("[name='startDate']", window.parent.document).val();
+     var e = $("[name='endDate']", window.parent.document).val();
+     var a = $("[name='areaCode']", window.parent.document).val();
+     var p = $("[name='productCode']", window.parent.document).val();
+     var c = $("[name='cityCompany']", window.parent.document).val();
+     var b = $("[name='belongtoCode']", window.parent.document).val();
+     var i = $("[name='insuranceType']", window.parent.document).val();
+     $("#ifm").attr(
+     "src",
+     "analysis/getAnalysisBar.action?startDate=" + s
+     + "&endDate=" + e + "&areaCode=" + a
+     + "&productCode=" + p + "&cityCompany=" + c
+     + "&belongtoCode=" + b + "&insuranceType=" + i+"&type=upload");
+
+     $("tbody tr:last td:first").html("合计");
+     $("tbody tr:last td").addClass("bg-total");
+     }); */
+</script>
+</body>
+</html>
+

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html debug="true" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>sample</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        tr.stop td {
+            color: #ccc !important;
+        }
+
+        tr.stop a {
+            color: #88bbff !important;
+        }
+    </style>
+</head>
+
+<body style="background-color: #fff;padding: 0;">
+<table width="100%" class="table-hover">
+    <thead>
+    <tr>
+        <th>用户工号</th>
+        <th>用户名字</th>
+        <th>用户角色</th>
+        <th>创建时间</th>
+        <th>用户状态</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody align="center">
+    <div th:if="${userList}!=null" th:each="user:${userList}">
+        <tr th:if="${user.status}==1">
+            <td th:text="${user.username}">${user.username }</td>
+            <td th:text="${user.name }">${user.name }</td>
+            <td>
+						<span th:if="${user.role}==0">
+							出单员
+						</span>
+                <span th:if="${user.role}==1">
+							保险公司管理人员
+						</span>
+                <span th:if="${user.role}==2">
+							景区管理人员
+						</span>
+            </td>
+            <td th:text="${#dates.format(user.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${user.status}==1?'使用中':'停用中'">${user.status==1?'使用中':'停用中' }</td>
+            <td>
+                <a th:href="${'javascript:upd('+user.id+')'}" href="javascript:upd(${user.id})">修改</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a th:if="${user.status}==1" th:href="${'javascript:del('+user.id+','+user.name+')'}"
+                   href="javascript:del('${user.id}','${user.name}')">停用</a>
+            </td>
+        </tr>
+        <tr class="stop" th:if="${user.status}==0">
+            <td th:text="${user.username }">${user.username }</td>
+            <td th:text="${user.name }">${user.name }</td>
+            <td>
+						<span th:if="${user.role}==0">
+							出单员
+						</span>
+                <span th:if="${user.role}==1">
+							保险公司管理人员
+						</span>
+                <span th:if="${user.role}==2">
+							景区管理人员
+						</span>
+            </td>
+            <td th:text="${#dates.format(user.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${user.status}==1?'使用中':'停用中'">${user.status==1?'使用中':'停用中' }</td>
+            <td>
+                <a th:href="${'javascript:upd('+user.id+')'}" href="javascript:upd(${user.id})">修改</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a th:if="${user.status}==0" th:href="${'javascript:open('+user.id+','+user.name+')'}"
+                   href="javascript:del('${user.id}','${user.name}')">停用</a>
+            </td>
+        </tr>
+    </div>
+    <div th:if="${userList}==null">
+        <tr>
+            <td colspan="6" height="150px">无符合查询条件记录！</td>
+        </tr>
+    </div>
+    </tbody>
+</table>
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js">
+</script>
+<script type="text/javascript" src="/static/res/js/user.js">
+</script>
+<script>
+    function del(ur, name) {
+        if (confirm("确认要停用？")) {
+            parent.location.href = "/system/user/deleteUser?id=" + ur + "&namevo=" + encodeURI(name);
+        }
+    }
+
+    function open(ur, name) {
+        parent.location.href = "/system/user/openUser?id=" + ur + "&namevo=" + encodeURI(name);
+    }
+
+    function upd(ur) {
+        parent.location.href = "/system/user/toUpdateUser?userId=" + ur;
+    }
+
+    function editRole(ur) {
+        parent.location.href = "userManage/updUserRoles.action?user.id=" + ur;
+    };
+</script>
+</body>
+</html>

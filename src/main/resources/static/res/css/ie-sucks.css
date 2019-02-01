@@ -1,0 +1,36 @@
+.ie6-out{
+	_margin-left:905px;
+	_zoom:1;
+}
+.ie6-in{
+	_position:relative;
+	_float:left;
+	_margin-left:-905px;
+}
+#content{
+	_zoom:1;
+}
+#topmenu{
+	margin-top:26px;
+}
+#sidebar{
+	width:160px;
+}
+#sidebar ul{
+	width:150px;
+}
+#sidebar ul li{
+	line-height: 18px;
+	padding:2px;
+}
+
+#sidebar ul li ul{
+	width:140px;
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+#sidebar h3{
+}
+#rightnow .reallynow a {
+	padding:0 0 0 10px;
+}

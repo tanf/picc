@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.OrganizationMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.Organization">
+        <id property="id" column="organization_id"/>
+        <result property="name" column="organization_name"/>
+    </resultMap>
+    <sql id="baseColumns">
+        tb_organization.organization_id,tb_organization.organization_name
+    </sql>
+    <select id="queryAll" resultMap="baseResultMap">
+        select <include refid="baseColumns"/> from tb_organization
+    </select>
+    <update id="update" parameterType="organization">
+        update tb_organization
+        <set>
+            <if test="name!=null">
+                organization_name=#{name}
+            </if>
+        </set>
+        where organization_id=#{id}
+    </update>
+</mapper>

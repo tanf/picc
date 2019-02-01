@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>后台管理</title>
+<meta charset="utf-8">
+</head>
+<frameset rows="68,*" frameborder="no" border="0">
+	<frame th:src="@{view/system/include/header}" src="system/include/header.html" frameborder="0"
+		noresize="noresize" scrolling="no" />
+	<frameset cols="183,*" frameborder="no" border="0">
+		<frame th:src="@{view/system/include/slider}" src="system/include/slider.html" id="slider" name="slider" frameborder="0"
+			noresize="noresize" scrolling="auto" />
+		<frame th:src="@{view/system/welcome}" src="system/welcome.html" id="main" name="main"
+			frameborder="0" noresize="noresize" scrolling="auto" />
+	</frameset>
+</frameset>
+</html>

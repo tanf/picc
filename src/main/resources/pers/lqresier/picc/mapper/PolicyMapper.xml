@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.PolicyMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.Policy">
+        <id property="id" column="policy_id"/>
+        <result property="policyCode" column="policy_code"/>
+        <result property="documentNum" column="document_num"/>
+        <result property="documentCode" column="document_code"/>
+        <result property="createTime" column="policy_create_time"/>
+        <result property="beginTime" column="policy_begin_time"/>
+        <result property="endTime" column="policy_end_time"/>
+        <result property="policyNum" column="policy_num"/>
+        <result property="premium" column="policy_premium"/>
+        <result property="premiumTotal" column="policy_premium_total"/>
+        <result property="coverage" column="policy_coverage"/>
+        <result property="coverageTotal" column="policy_coverage_total"/>
+        <result property="status" column="policy_status"/>
+        <association property="document" javaType="document">
+            <id property="id" column="document_id"/>
+            <result property="num" column="document_num"/>
+            <result property="status" column="document_status"/>
+            <result property="useTime" column="document_use_time"/>
+            <result property="createTime" column="document_create_time"/>
+            <result property="userName" column="user_name"/>
+            <result property="allocatorName" column="allocator_name"/>
+        </association>
+        <association property="product" javaType="product">
+            <id property="id" column="product_id"/>
+            <result property="name" column="product_name"/>
+            <result property="code" column="product_code"/>
+            <result property="documentCode" column="document_code"/>
+            <result property="info" column="product_info"/>
+            <result property="timeLimit" column="product_time_limit"/>
+            <result property="coverage" column="product_coverage"/>
+            <result property="premium" column="product_premium"/>
+            <result property="compensat1" column="product_compensate1"/>
+            <result property="compensat2" column="product_compensate2"/>
+            <result property="compensat3" column="product_compensate3"/>
+            <result property="compensat4" column="product_compensate4"/>
+            <result property="productStatus" column="product_status"/>
+        </association>
+        <!--<association property="user" javaType="user">-->
+            <!--<id property="id" column="user_id"/>-->
+            <!--<result property="username" column="user_username"/>-->
+            <!--<result property="password" column="user_password"/>-->
+            <!--<result property="name" column="user_name"/>-->
+            <!--<result property="role" column="user_role"/>-->
+            <!--<result property="createTime" column="user_create_time"/>-->
+            <!--<result property="status" column="user_status"/>-->
+        <!--</association>-->
+        <association property="policyHolder" javaType="pers.lqresier.picc.entity.Insurer">
+            <id property="id" column="insurer_id"/>
+            <result property="cardType" column="insurer_card_type"/>
+            <result property="cardCode" column="insurer_card_code"/>
+            <result property="name" column="insurer_name"/>
+            <result property="phone" column="insurer_phone"/>
+            <result property="address" column="insurer_address"/>
+            <result property="birthday" column="insurer_birthday"/>
+        </association>
+    </resultMap>
+    <resultMap id="userSaleVoMap" type="pers.lqresier.picc.vo.UserSaleVO">
+        <result property="saleNum" column="sale_total"/>
+        <result property="userName" column="user_name"/>
+    </resultMap>
+    <select id="queryByCondition" parameterType="pers.lqresier.picc.condition.PolicyCondition" resultMap="baseResultMap">
+        select
+        tb_policy.policy_id,tb_policy.policy_code,tb_policy.document_num,tb_policy.document_code,tb_policy.policy_create_time,tb_policy.policy_begin_time,tb_policy.policy_end_time,tb_policy.policy_num,tb_policy.policy_premium,tb_policy.policy_premium_total,tb_policy.policy_coverage,tb_policy.policy_coverage_total,tb_policy.policy_status,
+        tb_product.product_id,tb_product.product_name,tb_product.product_code,tb_product.document_code,tb_product.product_info,tb_product.product_time_limit,tb_product.product_coverage,tb_product.product_premium,tb_product.product_compensate1,tb_product.product_compensate2,tb_product.product_compensate3,tb_product.product_compensate4,tb_product.product_status,
+        tb_insurer.insurer_id,tb_insurer.insurer_card_type,tb_insurer.insurer_card_code,tb_insurer.insurer_name,tb_insurer.insurer_phone,tb_insurer.insurer_address,tb_insurer.insurer_birthday
+        from
+        tb_policy,tb_product,tb_insurer
+        where
+        tb_policy.product_id=tb_product.product_id and tb_policy.policy_holder_id=tb_insurer.insurer_id
+        <trim prefix="and " suffixOverrides="and|or">
+            <if test="documentNum!=null and documentNum!=''">
+                tb_policy.document_num like "%"#{documentNum}"%" and
+            </if>
+            <if test="policyCode!=null and policyCode!=''">
+                tb_policy.policy_code like "%"#{policyCode}"%" and
+            </if>
+            <if test="status!=null">
+                tb_policy.policy_status=#{status} and
+            </if>
+            <if test="beginTime!=null">
+                tb_policy.policy_create_time>#{beginTime} and
+            </if>
+            <if test="endTime!=null">
+                #{endTime}>tb_policy.policy_create_time and
+            </if>
+        </trim>
+        order by policy_create_time desc
+    </select>
+    <select id="getSumPremium" parameterType="int" resultType="double">
+        SELECT sum(policy_premium) FROM tb_policy WHERE TO_DAYS( NOW( ) ) - TO_DAYS( policy_create_time) =#{days}
+    </select>
+    <select id="getUserSaleVOs" resultMap="userSaleVoMap">
+        select tb_user.user_name,count(1) sale_total from tb_policy,tb_user where tb_policy.user_id=tb_user.user_id and tb_user.user_role=0 group by tb_user.user_id
+    </select>
+    <insert id="add" parameterType="policy">
+        <selectKey keyColumn="policy_id" keyProperty="id" order="AFTER" resultType="int">
+            select last_insert_id()
+        </selectKey>
+        insert into tb_policy
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="policyCode!=null">
+                policy_code,
+            </if>
+            <if test="documentNum!=null">
+                document_num,
+            </if>
+            <if test="documentCode!=null">
+                document_code,
+            </if>
+            <if test="createTime!=null">
+                policy_create_time,
+            </if>
+            <if test="beginTime!=null">
+                policy_begin_time,
+            </if>
+            <if test="endTime!=null">
+                policy_end_time,
+            </if>
+            <if test="policyNum!=null">
+                policy_num,
+            </if>
+            <if test="premium!=null">
+                policy_premium,
+            </if>
+            <if test="premiumTotal!=null">
+                policy_premium_total,
+            </if>
+            <if test="coverage!=null">
+                policy_coverage,
+            </if>
+            <if test="coverageTotal!=null">
+                policy_coverage_total,
+            </if>
+            <if test="status!=null">
+                policy_status,
+            </if>
+            <if test="document.id!=null">
+                document_id,
+            </if>
+            <if test="product.id!=null">
+                product_id,
+            </if>
+            <if test="website.id!=null">
+                website_id,
+            </if>
+            <if test="user.id!=null">
+                user_id,
+            </if>
+            <if test="policyHolder.id!=null">
+                policy_holder_id,
+            </if>
+            <if test="insured.id!=null">
+                insured_id,
+            </if>
+            <if test="beneficiary.id!=null">
+                beneficiary_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="policyCode!=null">
+                #{policyCode},
+            </if>
+            <if test="documentNum!=null">
+                #{documentNum},
+            </if>
+            <if test="documentCode!=null">
+                #{documentCode},
+            </if>
+            <if test="createTime!=null">
+                #{createTime},
+            </if>
+            <if test="beginTime!=null">
+                #{beginTime},
+            </if>
+            <if test="endTime!=null">
+                #{endTime},
+            </if>
+            <if test="policyNum!=null">
+                #{policyNum},
+            </if>
+            <if test="premium!=null">
+                #{premium},
+            </if>
+            <if test="premiumTotal!=null">
+                #{premiumTotal},
+            </if>
+            <if test="coverage!=null">
+                #{coverage},
+            </if>
+            <if test="coverageTotal!=null">
+                #{coverageTotal},
+            </if>
+            <if test="status!=null">
+                #{status},
+            </if>
+            <if test="document.id!=null">
+                #{document.id},
+            </if>
+            <if test="product.id!=null">
+                #{product.id},
+            </if>
+            <if test="website.id!=null">
+                #{website.id},
+            </if>
+            <if test="user.id!=null">
+                #{user.id},
+            </if>
+            <if test="policyHolder.id!=null">
+                #{policyHolder.id},
+            </if>
+            <if test="insured.id!=null">
+                #{insured.id},
+            </if>
+            <if test="beneficiary.id!=null">
+                #{beneficiary.id},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="policy">
+        update tb_policy
+        <set>
+            <if test="policyCode!=null">
+                policy_code=#{policyCode},
+            </if>
+            <if test="documentNum!=null">
+                document_num=#{documentNum},
+            </if>
+            <if test="documentCode!=null">
+                document_code=#{documentCode},
+            </if>
+            <if test="createTime!=null">
+                policy_create_time=#{createTime},
+            </if>
+            <if test="beginTime!=null">
+                policy_begin_time=#{beginTime},
+            </if>
+            <if test="endTime!=null">
+                policy_end_time=#{endTime},
+            </if>
+            <if test="policyNum!=null">
+                policy_num=#{policyNum},
+            </if>
+            <if test="premium!=null">
+                policy_premium=#{premium},
+            </if>
+            <if test="premiumTotal!=null">
+                policy_premium_total=#{premiumTotal},
+            </if>
+            <if test="coverage!=null">
+                policy_coverage=#{coverage},
+            </if>
+            <if test="coverageTotal!=null">
+                policy_coverage_total=#{coverageTotal},
+            </if>
+            <if test="status!=null">
+                policy_status=#{status},
+            </if>
+            <if test="document.id!=null">
+                document_id=#{document.id},
+            </if>
+            <if test="product.id!=null">
+                product_id=#{product.id},
+            </if>
+            <if test="website.id!=null">
+                website_id=#{website.id},
+            </if>
+            <if test="user.id!=null">
+                user_id=#{user.id},
+            </if>
+            <if test="policyHolder.id!=null">
+                policy_holder_id=#{policyHolder.id},
+            </if>
+            <if test="insured.id!=null">
+                insured_id=#{insured.id},
+            </if>
+            <if test="beneficiary.id!=null">
+                beneficiary_id=#{beneficiary.id},
+            </if>
+        </set>
+        where policy_id=#{id}
+    </update>
+    <select id="query" parameterType="policy" resultMap="baseResultMap">
+        select
+        tb_policy.policy_id,tb_policy.policy_code,tb_policy.document_num,tb_policy.document_code,tb_policy.policy_create_time,tb_policy.policy_begin_time,tb_policy.policy_end_time,tb_policy.policy_num,tb_policy.policy_premium,tb_policy.policy_premium_total,tb_policy.policy_coverage,tb_policy.policy_coverage_total,tb_policy.policy_status,
+        tb_product.product_id,tb_product.product_name,tb_product.product_code,tb_product.document_code,tb_product.product_info,tb_product.product_time_limit,tb_product.product_coverage,tb_product.product_premium,tb_product.product_compensate1,tb_product.product_compensate2,tb_product.product_compensate3,tb_product.product_compensate4,tb_product.product_status,
+        tb_insurer.insurer_id,tb_insurer.insurer_card_type,tb_insurer.insurer_card_code,tb_insurer.insurer_name,tb_insurer.insurer_phone,tb_insurer.insurer_address,tb_insurer.insurer_birthday
+        from
+        tb_policy,tb_product,tb_insurer
+        where
+        tb_policy.policy_id=#{id} and tb_policy.product_id=tb_product.product_id and tb_policy.policy_holder_id=tb_insurer.insurer_id
+    </select>
+</mapper>

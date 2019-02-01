@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.ProductTypeMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.ProductType">
+        <id property="id" column="type_id"/>
+        <result property="name" column="type_name"/>
+        <result property="code" column="type_code"/>
+    </resultMap>
+    <sql id="baseColumns">
+        tb_product_type.type_id,tb_product_type.type_name,tb_product_type.type_code
+    </sql>
+    <select id="queryAll" resultMap="baseResultMap">
+        select <include refid="baseColumns"/> from tb_product_type
+    </select>
+</mapper>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.ProductMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.Product">
+        <id property="id" column="product_id"/>
+        <result property="name" column="product_name"/>
+        <result property="code" column="product_code"/>
+        <result property="documentCode" column="document_code"/>
+        <result property="info" column="product_info"/>
+        <result property="timeLimit" column="product_time_limit"/>
+        <result property="coverage" column="product_coverage"/>
+        <result property="premium" column="product_premium"/>
+        <result property="compensat1" column="product_compensate1"/>
+        <result property="compensat2" column="product_compensate2"/>
+        <result property="compensat3" column="product_compensate3"/>
+        <result property="compensat4" column="product_compensate4"/>
+        <result property="productStatus" column="product_status"/>
+        <association property="type" javaType="productType">
+            <id property="id" column="type_id"/>
+            <result property="name" column="type_name"/>
+            <result property="code" column="type_code"/>
+        </association>
+    </resultMap>
+    <sql id="baseColumns">
+        tb_product.product_id,tb_product.product_name,tb_product.product_code,tb_product.document_code,tb_product.product_info,tb_product.product_time_limit,tb_product.product_coverage,tb_product.product_premium,tb_product.product_compensate1,tb_product.product_compensate2,tb_product.product_compensate3,tb_product.product_compensate4,tb_product.product_status
+    </sql>
+    <select id="queryByCondition" parameterType="pers.lqresier.picc.condition.ProductCondition" resultMap="baseResultMap">
+        select
+        <include refid="baseColumns"/>,tb_product_type.type_id,tb_product_type.type_name,tb_product_type.type_code
+         from
+         tb_product,tb_product_type
+         where
+         <trim suffixOverrides="and|or">
+             tb_product.type_id=tb_product_type.type_id and
+             <if test="name!=null and name!=''">
+                tb_product.product_name like '%'#{name}'%' and
+             </if>
+             <if test="code!=null and code!=''">
+                 tb_product.product_code like '%'#{code}'%' and
+             </if>
+             <if test="typeId!=null">
+                 tb_product.type_id=#{typeId} and
+             </if>
+             <if test="premium!=null">
+                 tb_product.product_premium=#{premium} and
+             </if>
+             <if test="timeLimit!=null">
+                 tb_product.product_time_limit=#{timeLimit} and
+             </if>
+             <if test="status!=null">
+                 tb_product.product_status=#{status} and
+             </if>
+         </trim>
+    </select>
+    <select id="queryPremium" resultMap="baseResultMap">
+        select product_premium from tb_product group by product_premium
+    </select>
+    <select id="isExist" parameterType="product" resultType="int">
+        select
+        count(1)
+        from
+        tb_product
+        <trim prefix="where" suffixOverrides="and|or">
+            <if test="id!=null">
+                product_id!=#{id} and
+            </if>
+            <if test="name!=null">
+                product_name=#{name} and
+            </if>
+            <if test="code!=null">
+                product_code=#{code} and
+            </if>
+            <if test="documentCode!=null">
+                document_code=#{documentCode} and
+            </if>
+            <if test="info!=null">
+                product_info=#{info} and
+            </if>
+            <if test="timeLimit!=null">
+                product_time_limit=#{timeLimit} and
+            </if>
+            <if test="coverage!=null">
+                product_coverage=#{coverage} and
+            </if>
+            <if test="premium!=null">
+                product_premium=#{premium} and
+            </if>
+            <if test="compensat1!=null">
+                product_compensate1=#{compensat1} and
+            </if>
+            <if test="compensate2!=null">
+                product_compensate2=#{compensate2} and
+            </if>
+            <if test="compensate3!=null">
+                product_compensate3=#{compensate3} and
+            </if>
+            <if test="compensate4!=null">
+                product_compensate4=#{compensate4} and
+            </if>
+            <if test="productStatus!=null">
+                product_status=#{productStatus} and
+            </if>
+        </trim>
+    </select>
+    <select id="queryDocumentCodeInfo" resultMap="baseResultMap">
+        select product_name,product_premium,document_code from tb_product where product_status=1 group by product_name,product_premium,document_code
+    </select>
+    <select id="queryAll" resultMap="baseResultMap">
+        select
+        <include refid="baseColumns"/>,tb_product_type.type_id,tb_product_type.type_name,tb_product_type.type_code
+        from
+        tb_product,tb_product_type
+    </select>
+    <insert id="add" parameterType="product">
+        insert into tb_product
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="name!=null">
+                product_name,
+            </if>
+            <if test="code!=null">
+                product_code,
+            </if>
+            <if test="documentCode!=null">
+                document_code,
+            </if>
+            <if test="info!=null">
+                product_info,
+            </if>
+            <if test="timeLimit!=null">
+                product_time_limit,
+            </if>
+            <if test="coverage!=null">
+                product_coverage,
+            </if>
+            <if test="premium!=null">
+                product_premium,
+            </if>
+            <if test="compensat1!=null">
+                product_compensate1,
+            </if>
+            <if test="compensate2!=null">
+                product_compensate2,
+            </if>
+            <if test="compensate3!=null">
+                product_compensate3,
+            </if>
+            <if test="compensate4!=null">
+                product_compensate4,
+            </if>
+            <if test="productStatus!=null">
+                product_status,
+            </if>
+            <if test="type.id!=null">
+                type_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="name!=null">
+                #{name},
+            </if>
+            <if test="code!=null">
+                #{code},
+            </if>
+            <if test="documentCode!=null">
+                #{documentCode},
+            </if>
+            <if test="info!=null">
+                #{info},
+            </if>
+            <if test="timeLimit!=null">
+                #{timeLimit},
+            </if>
+            <if test="coverage!=null">
+                #{coverage},
+            </if>
+            <if test="premium!=null">
+                #{premium},
+            </if>
+            <if test="compensat1!=null">
+                #{compensat1},
+            </if>
+            <if test="compensate2!=null">
+                #{compensate2},
+            </if>
+            <if test="compensate3!=null">
+                #{compensate3},
+            </if>
+            <if test="compensate4!=null">
+                #{compensate4},
+            </if>
+            <if test="productStatus!=null">
+                #{productStatus},
+            </if>
+            <if test="type.id!=null">
+                #{type.id},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="product">
+        update tb_product
+        <set>
+            <if test="name!=null">
+                product_name=#{name},
+            </if>
+            <if test="code!=null">
+                product_code=#{code},
+            </if>
+            <if test="documentCode!=null">
+                document_code=#{documentCode},
+            </if>
+            <if test="info!=null">
+                product_info=#{info},
+            </if>
+            <if test="timeLimit!=null">
+                product_time_limit=#{timeLimit},
+            </if>
+            <if test="coverage!=null">
+                product_coverage=#{coverage},
+            </if>
+            <if test="premium!=null">
+                product_premium=#{premium},
+            </if>
+            <if test="compensat1!=null">
+                product_compensate1=#{compensat1},
+            </if>
+            <if test="compensate2!=null">
+                product_compensate2=#{compensate2},
+            </if>
+            <if test="compensate3!=null">
+                product_compensate3=#{compensate3},
+            </if>
+            <if test="compensate4!=null">
+                product_compensate4=#{compensate4},
+            </if>
+            <if test="productStatus!=null">
+                product_status=#{productStatus},
+            </if>
+            <if test="type.id!=null">
+                type_id=#{type.id},
+            </if>
+        </set>
+        where product_id=#{id}
+    </update>
+    <select id="query" parameterType="product">
+        select
+        <include refid="baseColumns"/>,tb_product_type.type_id,tb_product_type.type_name,tb_product_type.type_code
+        from
+        tb_product,tb_product_type
+        where
+        tb_product.product_id=#{id} and tb_product.type_id=tb_product_type.type_id
+    </select>
+</mapper>

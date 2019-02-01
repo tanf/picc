@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.LogMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.Log">
+        <id property="id" column="log_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="operationModel" column="operation_model"/>
+        <result property="operationType" column="operation_type"/>
+        <result property="operationTime" column="operation_time"/>
+        <result property="desc" column="log_desc"/>
+        <association property="user" javaType="user">
+            <id property="id" column="user_id"/>
+            <result property="username" column="user_username"/>
+            <result property="name" column="user_name"/>
+            <result property="role" column="user_role"/>
+            <result property="createTime" column="user_create_time"/>
+            <result property="status" column="user_status"/>
+        </association>
+    </resultMap>
+    <select id="queryByCondition" parameterType="pers.lqresier.picc.condition.LogCondition" resultMap="baseResultMap">
+        select
+        tb_log.log_id,tb_log.user_name,tb_log.operation_model,tb_log.operation_type,tb_log.operation_time,tb_log.log_desc,tb_user.user_id,tb_user.user_username,tb_user.user_name,tb_user.user_role,tb_user.user_create_time,tb_user.user_status
+        from
+        tb_log,tb_user
+        <trim prefix="where" suffixOverrides="and|or">
+            tb_log.user_id=tb_user.user_id and
+            <if test="userName!=null and userName!=''">
+                tb_log.user_name like "%"#{userName}"%" and
+            </if>
+            <if test="operationModel!=null and operationModel!=''">
+                tb_log.operation_model=#{operationModel} and
+            </if>
+            <if test="operationType!=null and operationType!=''">
+                tb_log.operation_type=#{operationType} and
+            </if>
+            <if test="beginTime!=null">
+                tb_log.operation_time>#{beginTime} and
+            </if>
+            <if test="endTime!=null">
+                #{endTime}>tb_log.operation_time and
+            </if>
+        </trim>
+        order by tb_log.operation_time desc
+    </select>
+
+    <insert id="add" parameterType="log">
+        insert into tb_log
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="userName!=null">
+                user_name,
+            </if>
+            <if test="operationModel!=null">
+                operation_model,
+            </if>
+            <if test="operationType!=null">
+                operation_type,
+            </if>
+            <if test="operationTime!=null">
+                operation_time,
+            </if>
+            <if test="desc!=null">
+                log_desc,
+            </if>
+            <if test="user.id!=null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="userName!=null">
+                #{userName},
+            </if>
+            <if test="operationModel!=null">
+                #{operationModel},
+            </if>
+            <if test="operationType!=null">
+                #{operationType},
+            </if>
+            <if test="operationTime!=null">
+                #{operationTime},
+            </if>
+            <if test="desc!=null">
+                #{desc},
+            </if>
+            <if test="user.id!=null">
+                #{user.id},
+            </if>
+        </trim>
+    </insert>
+</mapper>

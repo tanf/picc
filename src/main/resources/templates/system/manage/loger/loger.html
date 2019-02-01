@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>日志管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+    <link type="text/css" href="/static/res/css/jquery-ui-1.9.2.custom.min.css"
+          rel="stylesheet"/>
+    <link type="text/css" href="/static/res/css/jquery-ui-timepicker-addon.css"
+          rel="stylesheet"/>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+</head>
+<body onload="IFrameResize('ifm')" class="body-bg"
+      style="padding-right: 20px;">
+<div id="container-fluid">
+    <div class="ie6-out">
+        <div class="ie6-in">
+            <div id="content">
+                <div id="box">
+                    <h3 id="adduser">日志查询</h3>
+                    <form id="form" th:action="@{/system/log/queryLogByCondition}"
+                          action="${pageContext.servletContext.contextPath }/system/log.action?method=queryLogByCondition"
+                          method="post"
+                          target="ifm">
+                        <table class="form">
+                            <tr>
+                                <td style="border: 0" colspan="2">
+                                    &nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;<input
+                                        name="userName" id="userId"
+                                        type="text" tabindex="1" style="width: 100px;" maxlength="10"/>
+                                    <span style="margin-left: 50px;"></span>
+                                    起止时间:&nbsp;&nbsp;&nbsp;<input name="beginTime" id="start"
+                                                                  type="text" tabindex="1"
+                                                                  style="width: 140px;cursor: pointer;"
+                                                                  readonly="readonly"/> ~ <input
+                                        name="endTime" id="end" type="text" tabindex="1"
+                                        style="width: 140px;cursor: pointer;" readonly="readonly"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border: 0">&nbsp;操&nbsp;作&nbsp;类&nbsp;型:&nbsp;<select
+                                        name="operationType" id="opType" type="text" tabindex="1"
+                                        style="width: 100px;">
+                                    <option value="">所有类型</option>
+                                    <option value="add">增加</option>
+                                    <option value="del">停用</option>
+                                    <option value="open">启用</option>
+                                    <option value="update">修改</option>
+                                    <option value="login">登录</option>
+                                </select><span style="margin-left: 53px;"></span> 操作模块: <select
+                                        name="operationModel" id="opModule" type="text" tabindex="1"
+                                        style="width: 100px;" size="1">
+                                    <option value="">所有模块</option>
+                                    <option value="登录模块">登录模块</option>
+                                    <option value="单证管理">单证管理</option>
+                                    <option value="单证号段管理">单证号段管理</option>
+                                    <option value="用户管理">用户管理</option>
+                                    <option value="网点管理">网点管理</option>
+                                    <option value="产品管理">产品管理</option>
+                                </select></td>
+                                <td style="border: 0" align="right">
+                                    <button type="reset" class="btn btn-small"
+                                            style="margin-bottom:5px;">重置
+                                    </button>
+                                    <button type="submit" class="btn btn-info btn-small"
+                                            style="margin-bottom:5px;">查询
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                    <div class="row-fluid">
+                        <iframe th:src="@{/system/log/queryLogByCondition}"
+                                src="${pageContext.servletContext.contextPath }/system/log.action?method=queryLogByCondition"
+                                frameborder="0"
+                                marginheight="0" marginwidth="0" scrolling="no"
+                                id="ifm" name="ifm" onload="javascript:IFrameResize('ifm');"
+                                width="100%"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/res/js/bootstrap.min.js"></script>
+<!--[if lte IE 6]>
+<script type="text/javascript" src="/static/res/js/bootstrap-ie.js"></script>
+<![endif]-->
+<script type="text/javascript"
+        src="/static/res/js/jquery-ui-1.9.2.custom.min.js"></script>
+<script type="text/javascript"
+        src="/static/res/js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript"
+        src="/static/res/js/jquery-ui-timepicker-zh-CN.js"></script>
+<!-- IFrame高度自适应 -->
+<script type="text/javascript" src="/static/res/js/iframeAutoSize.js"></script>
+<script type="text/javascript">
+    var startDateTextBox = $('#start');
+    var endDateTextBox = $('#end');
+
+    startDateTextBox.datetimepicker({
+        timeFormat: 'hh:mm:ss',
+        onClose: function (dateText, inst) {
+            if (endDateTextBox.val() != '') {
+                var testStartDate = startDateTextBox
+                    .datetimepicker('getDate');
+                var testEndDate = endDateTextBox
+                    .datetimepicker('getDate');
+                if (testStartDate > testEndDate)
+                    endDateTextBox.datetimepicker('setDate',
+                        testStartDate);
+            } else {
+                endDateTextBox.val(dateText);
+            }
+        },
+        onSelect: function (selectedDateTime) {
+            endDateTextBox.datetimepicker('option', 'minDate',
+                startDateTextBox.datetimepicker('getDate'));
+        }
+    });
+    endDateTextBox.datetimepicker({
+        timeFormat: 'hh:mm:ss',
+        onClose: function (dateText, inst) {
+            if (startDateTextBox.val() != '') {
+                var testStartDate = startDateTextBox
+                    .datetimepicker('getDate');
+                var testEndDate = endDateTextBox
+                    .datetimepicker('getDate');
+                if (testStartDate > testEndDate)
+                    startDateTextBox.datetimepicker('setDate',
+                        testEndDate);
+            } else {
+                startDateTextBox.val(dateText);
+            }
+        },
+        onSelect: function (selectedDateTime) {
+            startDateTextBox.datetimepicker('option', 'maxDate',
+                endDateTextBox.datetimepicker('getDate'));
+        }
+    });
+</script>
+</body>
+</html>

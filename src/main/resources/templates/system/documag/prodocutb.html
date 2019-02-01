@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>sample</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        tr.stop td {
+            color: #ccc !important;
+        }
+
+        tr.stop a {
+            color: #88bbff !important;
+        }
+    </style>
+    <script type="text/javascript">
+        function send(id) {
+            parent.location.href = "docu/initUpate_update.action?id=" + id;
+        }
+    </script>
+
+</head>
+
+<body style="background-color: #fff;">
+<table class="table-hover">
+    <thead>
+    <tr>
+        <th>发放人员</th>
+        <th>单证号起始</th>
+        <th>单证号结尾</th>
+        <th>已发号段</th>
+        <th>未发号段</th>
+        <th>发放时间</th>
+        <th width="65">单证状态</th>
+    </tr>
+    </thead>
+    <tbody align="center">
+    <div th:if="${documentSegList}!=null" th:each="seg:${documentSegList }">
+        <tr th:if="${seg.status}==0" class="a-center">
+            <td th:text="${seg.allocator.name }">${seg.allocator.name }</td>
+            <td th:text="${seg.beginNum }">${seg.beginNum }</td>
+            <td th:text="${seg.endNum }">${seg.endNum }</td>
+            <td th:if="${seg.allotNum}=='未使用'">无</td>
+            <td th:if="${seg.allotNum}=='未使用'" th:text="${seg.beginNum +'-'+seg.endNum }">${seg.beginNum }-${seg.endNum
+                }
+            </td>
+            <td th:if="${seg.allotNum!='未使用'&&seg.beginNum==seg.allotNum  }" th:text="${seg.allotNum }">
+                ${seg.allotNum }
+            </td>
+            <td th:if="${seg.allotNum!='未使用'&&seg.beginNum!=seg.allotNum}"
+                th:text="${seg.beginNum +'-'+ seg.allotNum}">${seg.beginNum }-${seg.allotNum }
+            </td>
+            <td th:if="${seg.allotNum!='未使用'&&seg.endNum==seg.allotNum}">无</td>
+            <td th:if="${seg.allotNum!='未使用'&&seg.endNum!=seg.allotNum}" th:text="${seg.allotNum+1}+'-'+${seg.endNum}">
+                ${seg.allotNum+1 }-${seg.endNum }
+            </td>
+            <td th:text="${seg.createTime }">${seg.createTime }</td>
+            <td th:text="${seg.status==0 }?'未发完':'已发完'">${seg.status==0?"未发完":"已发完" }</td>
+        </tr>
+        <tr th:if="${seg.status}==1" class="a-center stop">
+            <td th:text="${seg.allocator.name }">${seg.allocator.name }</td>
+            <td th:text="${seg.beginNum }">${seg.beginNum }</td>
+            <td th:text="${seg.endNum }">${seg.endNum }</td>
+            <td th:if="${seg.allotNum}=='未使用'">无</td>
+            <td th:if="${seg.allotNum}=='未使用'" th:text="${seg.beginNum +'-'+seg.endNum }">${seg.beginNum }-${seg.endNum
+            <td th:if="${seg.allotNum!='未使用'&&seg.beginNum==seg.allotNum  }" th:text="${seg.allotNum }">
+                ${seg.allotNum }
+            </td>
+            <td th:if="${seg.allotNum!='未使用'&&seg.beginNum!=seg.allotNum}"
+                th:text="${seg.beginNum +'-'+ seg.allotNum}">${seg.beginNum }-${seg.allotNum }
+            </td>
+            <td th:if="${seg.allotNum!='未使用'&&seg.endNum==seg.allotNum}">无</td>
+            <td th:if="${seg.allotNum!='未使用'&&seg.endNum!=seg.allotNum}" th:text="${seg.allotNum+1}+'-'+${seg.endNum}">
+                ${seg.allotNum+1 }-${seg.endNum }
+            </td>
+            <td th:text="${seg.createTime }">${seg.createTime }</td>
+            <td th:text="${seg.status==0 }?'未发完':'已发完'">${seg.status==0?"未发完":"已发完" }</td>
+        </tr>
+    </div>
+
+    <div th:if="${documentSegList}==null">
+        <tr>
+            <td colspan="7" height="150px">无符合查询条件记录！</td>
+        </tr>
+    </div>
+    </tbody>
+</table>
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+</body>
+</html>
+

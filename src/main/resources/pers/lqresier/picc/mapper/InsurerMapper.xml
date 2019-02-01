@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.InsurerMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.Insurer">
+        <id property="id" column="insurer_id"/>
+        <result property="cardType" column="insurer_card_type"/>
+        <result property="cardCode" column="insurer_card_code"/>
+        <result property="name" column="insurer_name"/>
+        <result property="phone" column="insurer_phone"/>
+        <result property="address" column="insurer_address"/>
+        <result property="birthday" column="insurer_birthday"/>
+    </resultMap>
+    <sql id="columns">
+        tb_insurer.insurer_id,tb_insurer.insurer_card_type,tb_insurer.insurer_card_code,tb_insurer.insurer_name,tb_insurer.insurer_phone,tb_insurer.insurer_address,tb_insurer.insurer_birthday
+    </sql>
+    <select id="queryByCardCode" parameterType="string" resultMap="baseResultMap">
+        select
+        <include refid="columns"/>
+        from
+        tb_insurer
+        where
+        insurer_card_code=#{cardCode}
+        order by insurer_id desc limit 0,1
+    </select>
+    <insert id="add" parameterType="insurer">
+        insert into tb_insurer
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="cardType!=null">
+                insurer_card_type,
+            </if>
+            <if test="cardCode!=null">
+                insurer_card_code,
+            </if>
+            <if test="name!=null">
+                insurer_name,
+            </if>
+            <if test="phone!=null">
+                insurer_phone,
+            </if>
+            <if test="address!=null">
+                insurer_address,
+            </if>
+            <if test="birthday!=null">
+                insurer_birthday,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="cardType!=null">
+                #{cardType},
+            </if>
+            <if test="cardCode!=null">
+                #{cardCode},
+            </if>
+            <if test="name!=null">
+                #{name},
+            </if>
+            <if test="phone!=null">
+                #{phone},
+            </if>
+            <if test="address!=null">
+                #{address},
+            </if>
+            <if test="birthday!=null">
+                #{birthday},
+            </if>
+        </trim>
+    </insert>
+</mapper>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>单证管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/style.css"/>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css"/>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css"/>
+
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+    <link type="text/css" href="/static/res/css/jquery-ui-1.9.2.custom.min.css"
+          rel="stylesheet"/>
+    <link type="text/css" href="/static/res/css/jquery-ui-timepicker-addon.css"
+          rel="stylesheet"/>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        function onfind() {
+            if (eval($("#start").val()) > eval($("#end").val())) {
+                alert("起点不能大于终点");
+                return;
+            }
+            if ($("#startDate").val() > $("#endDate").val()) {
+                alert("起点时间不能大于终止时间");
+                return;
+            }
+            if (isNaN($("#start").val()) || isNaN($("#end").val())) {
+                alert("必须输入数字");
+                return;
+            }
+            $("#form").submit();
+        }
+    </script>
+
+</head>
+
+<body onload="IFrameResize('ifm')" class="body-bg"
+      style="padding-right: 20px;">
+<div id="container-fluid">
+    <div class="ie6-out">
+        <div class="ie6-in">
+            <div id="content">
+                <div id="box">
+                    <h3 id="adduser">查询领取号段</h3>
+                    <form id="form" th:action="@{/system/documentSeg/querySegByCondition}"
+                          action="${pageContext.servletContext.contextPath }/system/documentSeg.action?method=querySegByCondition"
+                          method="post"
+                          target="ifm">
+                        <table class="form">
+                            <tr>
+                                <td style="border: 0">
+                                    时间段
+                                    : &nbsp;&nbsp; <input name="beginTime" id="startDate"
+                                                          type="text" style="width: 140px;cursor: pointer;"
+                                                          readonly="readonly"/> ~
+                                    <input name="endTime"
+                                           id="endDate" type="text" style="width: 140px;cursor: pointer;"
+                                           readonly="readonly"/>
+
+
+                                    <span style="padding-left:30px;"></span>状态 : <select
+                                        name="status" style="width: 100px;">
+                                    <option value="">请选择</option>
+                                    <option value="0">未发完</option>
+                                    <option value="1">已发完</option>
+                                </select>
+                                </td>
+                                <td style="border: 0" align="right">
+                                    <button type="reset" class="btn btn-small"
+                                            style="margin-bottom:5px;">重置
+                                    </button>
+                                    <button type="submit" class="btn btn-info btn-small"
+                                            style="margin-bottom:5px;">查询
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                    <div class="row-fluid">
+                        <iframe width="100%" th:src="@{/system/documentSeg/querySegByCondition}"
+                                src="${pageContext.servletContext.contextPath }/system/documentSeg.action?method=querySegByCondition"
+                                frameborder="0" marginheight="0" marginwidth="0"
+                                scrolling="no" id="ifm" name="ifm"
+                                onload="javascript:IFrameResize('ifm');"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/res/js/bootstrap.min.js"></script>
+<!--[if lte IE 6]>
+<script type="text/javascript" src="/static/res/js/bootstrap-ie.js"></script>
+<![endif]-->
+<script type="text/javascript"
+        src="/static/res/js/jquery-ui-1.9.2.custom.min.js"></script>
+<script type="text/javascript"
+        src="/static/res/js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript"
+        src="/static/res/js/jquery-ui-timepicker-zh-CN.js"></script>
+<!-- IFrame高度自适应 -->
+<script type="text/javascript" src="/static/res/js/iframeAutoSize.js"></script>
+<script type="text/javascript" src="/static/res/js/menubar.js"></script>
+
+<script type="text/javascript">
+    var startDateTextBox = $('#startDate');
+    var endDateTextBox = $('#endDate');
+
+    startDateTextBox
+        .datetimepicker({
+            timeFormat: 'hh:mm:ss',
+            onClose: function (dateText, inst) {
+                if (endDateTextBox.val() != '') {
+                    var testStartDate = startDateTextBox
+                        .datetimepicker('getDate');
+                    var testEndDate = endDateTextBox
+                        .datetimepicker('getDate');
+                    if (testStartDate > testEndDate)
+                        endDateTextBox.datetimepicker('setDate',
+                            testStartDate);
+                } else {
+                    endDateTextBox.val(dateText);
+                }
+            },
+            onSelect: function (selectedDateTime) {
+                endDateTextBox.datetimepicker('option', 'minDate',
+                    startDateTextBox.datetimepicker('getDate'));
+            }
+        });
+    endDateTextBox
+        .datetimepicker({
+            timeFormat: 'hh:mm:ss',
+            onClose: function (dateText, inst) {
+                if (startDateTextBox.val() != '') {
+                    var testStartDate = startDateTextBox
+                        .datetimepicker('getDate');
+                    var testEndDate = endDateTextBox
+                        .datetimepicker('getDate');
+                    if (testStartDate > testEndDate)
+                        startDateTextBox.datetimepicker('setDate',
+                            testEndDate);
+                } else {
+                    startDateTextBox.val(dateText);
+                }
+            },
+            onSelect: function (selectedDateTime) {
+                startDateTextBox.datetimepicker('option', 'maxDate',
+                    endDateTextBox.datetimepicker('getDate'));
+            }
+        });
+</script>
+</body>
+</html>
+

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css" href="/static/res/css/theme.css" />
+<link rel="stylesheet" type="text/css" href="/static/res/css/style.css" />
+<!--[if IE]>
+<link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css" />
+<![endif]-->
+<!-- Le styles -->
+<link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css" />
+<!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+<!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+<link type="text/css" href="/static/res/css/jquery-ui-1.9.2.custom.min.css"
+	rel="stylesheet" />
+<link type="text/css" href="/static/res/css/jquery-ui-timepicker-addon.css"
+	rel="stylesheet" />
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+      <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+<style>
+	html{
+		overflow-x: hidden;
+	}
+</style>
+</head>
+
+<body class="body-bg">
+	<div id="sidebar">
+		<ul>
+			<li>
+				<h3>
+					<a href="javascript:;" onclick="runEffect(this)"
+						class="manage_page">投保管理</a>
+				</h3>
+				<ul>
+					
+						<li><a
+							href="javascript:linkToMain('../policy/policy');"
+							class="arrow_right">保单查询与退保</a>
+						</li>
+						<!--
+						<li><a
+							href="javascript:linkToMain('../polinomag/polino.html');"
+							class="arrow_right">保单号段查询</a>
+						</li>
+					
+						<li><a
+							href="javascript:linkToMain('../polinomag/addpolino.html');"
+							class="arrow_right">保单号段发放</a>
+						</li>
+						-->
+					
+				</ul>
+			</li>
+			<li>
+				<h3>
+					<a href="javascript:;" onclick="runEffect(this)"
+						class="folder_table">单证管理</a>
+				</h3>
+				<ul>
+						<li><a
+							href="javascript:linkToMain('../documag/docu');"
+							class="arrow_right">单证号段查询</a>
+						</li>
+					
+						<li><a
+							href="javascript:linkToMain('/system/documentSeg/toAddDocument');"
+							class="arrow_right">单证号段发放</a>
+						</li>
+					
+						<li><a
+							href="javascript:linkToMain('../documag/addProdocu');"
+							class="arrow_right">添加领取号段</a>
+						</li>
+					
+						<li><a
+							href="javascript:linkToMain('../documag/prodocu');"
+							class="arrow_right">查询领取号段</a>
+						</li>
+					
+
+				</ul>
+			</li>
+			<li>
+				<h3>
+					<a href="javascript:;" onclick="runEffect(this)" class="promotions">对账结算管理</a>
+				</h3>
+				<ul>
+					<li><a
+						href="javascript:linkToMain('../policy/report');"
+						class="arrow_right">统计报表</a>
+					</li>
+					<!-- 
+					<li><a
+						href="javascript:linkToMain('${pageContext.servletContext.contextPath }/system/analysis/check.jsp');"
+						class="arrow_right">对账结算</a>
+					</li>
+					<li><a
+						href="javascript:linkToMain('${pageContext.servletContext.contextPath }/system/analysis/upload.jsp');"
+						class="arrow_right">保单上传统计</a>
+					</li>
+				 	-->
+					<li><a
+						href="javascript:linkToMain('../documag/docucount/docucount');"
+						class="arrow_right">单证使用统计</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<h3>
+					<a href="javascript:;" onclick="runEffect(this)" class="app_add">高级管理</a>
+				</h3>
+				<ul>
+						<li><a
+							href="javascript:linkToMain('../manage/user/user');"
+							class="arrow_right">用户管理</a>
+						</li>
+						<!-- 
+						<li><a
+							href="javascript:linkToMain('${pageContext.servletContext.contextPath }/system/manage/role/role.jsp');"
+							class="arrow_right">角色管理</a>
+						</li>
+						 -->
+						<li><a
+							href="javascript:linkToMain('../manage/loger/loger');"
+							class="arrow_right">日志管理</a>
+						</li>
+						<li><a
+							href="javascript:linkToMain('/system/product/toQueryProduct');"
+							class="arrow_right">产品管理</a>
+						</li>
+						<!-- 
+						<li><a
+							href="javascript:linkToMain('${pageContext.servletContext.contextPath }/system/uploadExcel/policyExcel.jsp');"
+							class="arrow_right">行程单上传</a>
+						</li>
+						 -->
+				</ul>
+			</li>
+			<li>
+				<h3>
+					<a href="javascript:;" onclick="runEffect(this)" class="manage">系统配置</a>
+				</h3>
+				<ul>
+						<li><a
+							href="javascript:linkToMain('/system/website/queryWebsite');"
+							class="arrow_right">网点设置</a>
+						</li>
+						<!-- 
+						<li><a
+							href="javascript:linkToMain('${pageContext.s ervletContext.contextPath }/system/manage/configure/property.jsp');"
+							class="arrow_right">配置管理</a>
+						</li>
+						 -->
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="/static/res/js/menubar.js"></script>
+	<script type="text/javascript">
+		function runEffect(obj) {
+			$obj = $(obj).parent().parent().find('ul');
+			if ($obj.css("display") == "none") {
+				$obj.show('normal');
+			} else {
+				$obj.hide('normal');
+			}
+		}
+
+		function linkToMain(url) {
+			parent.frames['main'].location.href = url;
+		}
+
+/* 		$(function() {
+			$("#sidebar>ul>li>ul").css("display", "none");
+			$("#sidebar>ul>li:eq(0)>ul").css("display", "block");
+			$("#sidebar>ul>li:eq(1)>ul").css("display", "block");
+		}); */
+	</script>
+</body>
+</html>

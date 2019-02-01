@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.lqresier.picc.mapper.DocumentMapper">
+    <resultMap id="baseResultMap" type="pers.lqresier.picc.entity.Document">
+        <id property="id" column="document_id"/>
+        <result property="num" column="document_num"/>
+        <result property="status" column="document_status"/>
+        <result property="useTime" column="document_use_time"/>
+        <result property="createTime" column="document_create_time"/>
+        <result property="userName" column="user_name"/>
+        <result property="allocatorName" column="allocator_name"/>
+    </resultMap>
+    <resultMap id="documentVoMap" type="pers.lqresier.picc.vo.DocumentVO">
+        <result property="userName" column="user_name"/>
+        <result property="allocatorName" column="allocator_name"/>
+        <result property="beginNum" column="begin_num"/>
+        <result property="endNum" column="end_num"/>
+        <result property="nextNum" column="next_num"/>
+        <result property="allotTime" column="allot_time"/>
+        <result property="status" column="document_status"/>
+    </resultMap>
+    <sql id="columns">
+        tb_document.document_id,tb_document.document_num,tb_document.document_status,tb_document.document_use_time,tb_document.document_create_time,tb_document.user_name
+    </sql>
+
+    <select id="queryByCondition" parameterType="pers.lqresier.picc.condition.DocumentCondition" resultMap="baseResultMap">
+        select <include refid="columns"/> from tb_document
+        <trim prefix="where " suffixOverrides="and|or">
+            <if test="userName!=null and userName!=''">
+                user_name like "%"#{userName}"%" and
+            </if>
+            <if test="allocatorName!=null and allocatorName!=''">
+                allocator_name like "%"#{allocatorName}"%" and
+            </if>
+            <if test="status!=null">
+                document_status=#{status} and
+            </if>
+            <if test="beginTime!=null">
+                document_create_time>#{beginTime} and
+            </if>
+            <if test="endTime!=null">
+                #{endTime}>document_create_time and
+            </if>
+        </trim>
+    </select>
+
+    <update id="updateBatchDocument">
+        update tb_document set document_status=#{status},document_use_time=now(),where document_num>=#{beginNum}+0 and #{endNum}+0>=document_num
+    </update>
+
+    <select id="getLatestDocument" parameterType="user" resultMap="baseResultMap">
+        select document_id,document_num from tb_document where user_id=#{id} and document_status=0 order by document_num limit 0,1
+    </select>
+
+    <select id="queryUnfinishDocumentVOByCondition" parameterType="pers.lqresier.picc.condition.DocumentCondition" resultMap="documentVoMap">
+        select tb_document.user_name,tb_document.allocator_name,b.begin_num,b.end_num,min(document_num) next_num,document_create_time allot_time,0 as document_status
+        from
+        tb_document,
+        (select user_name,allocator_name,min(document_num) as begin_num,max(document_num) as end_num from tb_document group by user_name,allocator_name,document_create_time) as b
+        where document_status=0 and b.end_num>=tb_document.document_num and tb_document.document_num>=b.begin_num
+        group by b.begin_num,b.end_num,tb_document.allocator_name,tb_document.user_name,tb_document.document_create_time
+        <trim prefix="having " suffixOverrides="and|or">
+            <if test="userName!=null and userName!=''">
+                tb_document.user_name like "%"#{userName}"%" and
+            </if>
+            <if test="allocatorName!=null and allocatorName!=''">
+                tb_document.allocator_name like "%"#{allocatorName}"%" and
+            </if>
+            <if test="beginTime!=null">
+                tb_document.document_create_time>#{beginTime} and
+            </if>
+            <if test="endTime!=null">
+                #{endTime}>tb_document.document_create_time and
+            </if>
+            <if test="beginNum!=null and beginNum!='' and endNum==null and endNum==''">
+                (#{beginNum}+0>=b.begin_num and b.end_num>=#{beginNum}+0) and
+            </if>
+            <if test="beginNum==null and beginNum=='' and endNum!=null and endNum!=''">
+                #{endNum}+0>=b.begin_num and b.end_num>=#{endNum}+0 and
+            </if>
+            <if test="beginNum!=null and beginNum!='' and endNum!=null and endNum!=''">
+                (#{beginNum}+0>=b.begin_num and b.end_num>=#{beginNum}+0 or #{endNum}+0>=b.begin_num and b.end_num>=#{endNum}+0 or b.begin_num>=#{beginNum}+0 and #{endNum}+0>=b.end_num) and
+            </if>
+        </trim>
+        order by document_create_time desc
+    </select>
+
+    <select id="queryFinishDocumentVOByCondition" parameterType="pers.lqresier.picc.condition.DocumentCondition" resultMap="documentVoMap">
+        select
+        tb_document.user_name,tb_document.allocator_name,b.begin_num,b.end_num,document_create_time allot_time,1 as document_status
+        from
+        tb_document,
+        (select user_name,allocator_name,min(document_num) as begin_num,max(document_num) as end_num from tb_document group by user_name,allocator_name,document_create_time) as b
+        where
+        document_status!=0 and b.end_num>=tb_document.document_num and tb_document.document_num>=b.begin_num
+        group by
+        b.begin_num,b.end_num,tb_document.allocator_name,tb_document.user_name,tb_document.document_create_time
+        having count(1)=max(b.end_num)-min(b.begin_num)+1
+        <trim prefix="and " suffixOverrides="and|or">
+            <if test="userName!=null and userName!=''">
+                tb_document.user_name like "%"#{userName}"%" and
+            </if>
+            <if test="allocatorName!=null and allocatorName!=''">
+                tb_document.allocator_name like "%"#{allocatorName}"%" and
+            </if>
+            <if test="beginTime!=null">
+                tb_document.document_create_time>#{beginTime} and
+            </if>
+            <if test="endTime!=null">
+                #{endTime}>tb_document.document_create_time and
+            </if>
+            <if test="beginNum!=null and beginNum!='' and endNum==null and endNum==''">
+                (#{beginNum}+0>=b.begin_num and b.end_num>=#{beginNum}+0) and
+            </if>
+            <if test="beginNum==null and beginNum=='' and endNum!=null and endNum!=''">
+                #{endNum}+0>=b.begin_num and b.end_num>=#{endNum}+0 and
+            </if>
+            <if test="beginNum!=null and beginNum!='' and endNum!=null and endNum!=''">
+                (#{beginNum}+0>=b.begin_num and b.end_num>=#{beginNum}+0 or #{endNum}+0>=b.begin_num and b.end_num>=#{endNum}+0 or b.begin_num>=#{beginNum}+0 and #{endNum}+0>=b.end_num) and
+            </if>
+        </trim>
+        order by document_create_time desc
+    </select>
+
+    <select id="queryDocumentSegVO" resultType="pers.lqresier.picc.vo.DocumentVO">
+        select d.beginNum,c.endNum
+        from
+        (select (@i:=@i+1) id,document_num endNum from tb_document as a,(select @i:=0) as i
+        where document_status=#{status} and exists(
+        select * from tb_document as b
+        where a.document_num+1=b.document_num and b.document_status!=#{status} and b.document_num>=#{beginNum} and #{endNum}>=b.document_num) or document_status=#{status} and a.document_num=#{endNum})
+        as c,
+        (select (@k:=@k+1) id,document_num beginNum from tb_document as a,(select @k:=0) as k
+        where document_status=#{status} and exists(
+        select * from tb_document as b
+        where a.document_num-1=b.document_num and b.document_status!=#{status} and b.document_num>=#{beginNum} and #{endNum}>=b.document_num)or document_status=#{status} and a.document_num=#{beginNum})
+        as d
+        where c.id=d.id
+    </select>
+
+    <resultMap id="documentUseVoTempMap" type="pers.lqresier.picc.vo.DocumentUseVOTemp">
+        <result property="num" column="count(document_status)"/>
+        <result property="status" column="document_status"/>
+        <result property="name" column="user_name"/>
+        <result property="date" column="DATE_FORMAT(document_use_time,'%Y-%m-%d')"/>
+    </resultMap>
+    <select id="queryData" resultMap="documentUseVoTempMap">
+        select
+        count(document_status),document_status,tb_user.user_name,DATE_FORMAT(document_use_time,'%Y-%m-%d')
+        from
+        tb_document,tb_user
+        where
+        tb_user.user_id=tb_document.user_id and DATE_FORMAT( document_use_time, #{format} ) = DATE_FORMAT(#{date} ,#{format} )
+        group by
+        tb_user.user_name,document_status,DATE_FORMAT(document_use_time,'%Y-%m-%d')
+    </select>
+    <insert id="add" parameterType="document">
+        insert into tb_document
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="num!=null">
+                document_num,
+            </if>
+            <if test="status!=null">
+                document_status,
+            </if>
+            <if test="useTime!=null">
+                document_use_time,
+            </if>
+            <if test="createTime!=null">
+                document_create_time,
+            </if>
+            <if test="userName!=null">
+                user_name,
+            </if>
+            <if test="allocatorName!=null">
+                allocator_name,
+            </if>
+            <if test="user.id!=null">
+                user_id,
+            </if>
+            <if test="seg.id!=null">
+                seg_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="num!=null">
+                #{num},
+            </if>
+            <if test="status!=null">
+                #{status},
+            </if>
+            <if test="useTime!=null">
+                #{useTime},
+            </if>
+            <if test="createTime!=null">
+                #{createTime},
+            </if>
+            <if test="userName!=null">
+                #{userName},
+            </if>
+            <if test="allocatorName!=null">
+                #{allocatorName},
+            </if>
+            <if test="user.id!=null">
+                #{user.id},
+            </if>
+            <if test="seg.id!=null">
+                #{seg.id},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="document">
+        update tb_document
+        <set>
+            <if test="num!=null">
+                document_num=#{num},
+            </if>
+            <if test="status!=null">
+                document_status=#{status},
+            </if>
+            <if test="useTime!=null">
+                document_use_time=#{useTime},
+            </if>
+            <if test="createTime!=null">
+                document_create_time=#{createTime},
+            </if>
+            <if test="userName!=null">
+                user_name=#{userName},
+            </if>
+            <if test="allocatorName!=null">
+                allocator_name=#{allocatorName},
+            </if>
+            <if test="user.id!=null">
+                user_id=#{user.id},
+            </if>
+            <if test="seg.id!=null">
+                seg_id=#{seg.id},
+            </if>
+        </set>
+        where document_id=#{id}
+    </update>
+</mapper>

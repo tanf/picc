@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>单证号段发放</title>
+<link rel="stylesheet" type="text/css" href="/static/res/css/theme.css" />
+<link rel="stylesheet" type="text/css" href="/static/res/css/style.css" />
+<!--[if IE]>
+<link rel="stylesheet" type="text/css" href="/static/res/css/ie-sucks.css" />
+<![endif]-->
+
+<!-- Le styles -->
+<link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="/static/res/css/message.css" />
+<!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css"/>
+    <![endif]-->
+<!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css"/>
+    <![endif]-->
+
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+      <script src="/static/res/js/html5.js"></script>
+    <![endif]-->
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/res/js/message.js"></script>
+<script type="text/javascript">
+	function checks() {
+		var st = $("#start").val() * 1;
+		var en = $("#end").val() * 1;
+		var lenstart = "" + st;
+		var lenend = "" + en;
+		if ($("#prodocu").val() == null||$("#prodocu").val() == '') {
+			$.message({
+				message:"没有相应号段可以发放！",
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+			return;
+		}
+		if ($("#end").val() == "") {
+			$.message({
+				message:"发放结尾为必填项！",
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+			return;
+		}
+		if (lenstart.length != 14 || lenend.length != 14) {
+			$.message({
+				message:"起始、结尾号必须为14位数字！",
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+			return;
+		}
+		if (eval($("#start").val()) >= eval($("#end").val())) {
+			$.message({
+				message:"起点不能大于等于终点！",
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+			return;
+		}
+		if (isNaN($("#end").val())) {
+			$.message({
+				message:"必须输入数字",
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+			return;
+		}
+
+		var kefahuaduan = $("#prodocu").find("option:selected").text().split(
+				"-");
+		if (eval($("#end").val()) > eval(kefahuaduan[1])) {
+			$.message({
+				message:"不可超过领取号段的最大值！",
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+			return;
+		}
+		if(($("#end").val()-$("#start").val()+1)%200!=0){
+			$.message({
+				message:"每次必须发放200张的倍数!",
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+			return;
+		}
+		$("#prodocu_id").val($("#prodocu").val());
+		
+		$("form:first").submit();
+	}
+	function changPro(prodocu_id) {
+		if(prodocu_id==""||prodocu_id==null){
+			return;
+		}
+		$.ajax({
+			type : "POST",
+			dataType:"json",
+			url : "/system/documentSeg/queryDocumentSegById",
+			data : {"segId": + prodocu_id},
+			success : function(response) {
+				if(response!=null){
+					if(response.allotNum!="未使用"){
+						$("#yifaStart").val(response.beginNum);
+						$("#yifaEnd").val(response.allotNum);
+						$("#start").val(1+Number(response.allotNum));
+					}else{
+						$("#yifaStart").val("");
+						$("#yifaEnd").val("");
+						$("#start").val(response.beginNum);
+					}
+				}else{
+					$("#yifaStart").val("");
+					$("#yifaEnd").val("");
+					$("#start").val("");
+				}
+			}
+		});
+	}
+</script>
+
+</head>
+
+<body onload="IFrameResize('ifm')" class="body-bg"
+	style="padding-right: 20px;">
+	<div id="container-fluid">
+		<div class="ie6-out">
+			<div class="ie6-in">
+				<div id="content">
+					<div id="box">
+						<h3 id="adduser">单证号段发放</h3>
+						<form id="form" th:action="@{/system/documentSeg/provideSeg}" action="${pageContext.servletContext.contextPath }/system/documentSeg.action?method=provideSeg" method="post">
+	
+							<table class="form">
+								<tr>
+									<td style="border: 0" width="200" align="right">省领取号段:</td>
+									<td style="border: 0">
+										<select id="prodocu" style="width: 293px;" name="segId" onchange="changPro(this.value)">
+											<option th:if="${documentSegList}!=null" th:each="seg:${documentSegList}" th:value="${seg.id }" th:text="${seg.beginNum +'-'+seg.endNum }" value="${seg.id }">${seg.beginNum }-${seg.endNum }</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td style="border: 0" width="200" align="right">出单员:</td>
+									<td style="border: 0">
+										<select name="userId" style="width: 142px;">
+											<option th:if="${userList}!=null" th:each="user:${userList}" th:value="${user.id}" th:text="${user.name}" value="${user.id }">${user.name }</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td style="border: 0" align="right">已放号段:</td>
+									<td style="border: 0">&nbsp;&nbsp;<input
+										style="width:140px ;" type="text" readonly="readonly"
+										id="yifaStart" value=""></input> ~ <input
+										style="width:140px ;" type="text" readonly="readonly"
+										id="yifaEnd" value=""></input>
+									</td>
+								</tr>
+								<tr>
+									<td style="border: 0" align="right">现放号段:</td>
+									<td style="border: 0">&nbsp;&nbsp;
+									
+									<input type="text"
+										maxlength="14" style="width:140px ;"
+										name="docugrant.docuStart" id="start" readonly="readonly"
+										value='' />
+									~ 
+									<input
+										maxlength="14" style="width:140px ;" type="text"
+										name="endNum" id="end"
+										onkeyup="value=value.replace(/[^\d]/g,'') "
+										onbeforepaste="clipboardData.setData(´text´,clipboardData.getData(´text´).replace(/[^\d]/g,''))" />
+									</td>
+								</tr>
+								<tr>
+									<td style="border: 0"></td>
+									<td style="border: 0">
+										<button type="reset" onclick="javascript:history.go(-1);"
+											class="btn">返回</button>
+										<button type="reset" class="btn">重置</button>
+										<button type="button" class="btn btn-info" onclick="checks()">确认发放单证号段</button>
+									</td>
+								</tr>
+							</table>
+							<input type="hidden" id="prodocu_id" name="id"></input>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Le javascript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	
+	<script type="text/javascript" src="/static/res/js/bootstrap.min.js"></script>
+	<!--[if lte IE 6]>
+    <script type="text/javascript" src="/static/res/js/bootstrap-ie.js"></script>
+    <![endif]-->
+	<!-- IFrame高度自适应 -->
+	<script type="text/javascript" src="/static/res/js/iframeAutoSize.js"></script>
+	
+	<script type="text/javascript">
+		//加载完页面，请求一次ajax
+		changPro($("#prodocu").val());
+	</script>
+	<script type="text/javascript" th:if="${tip}!=null" th:inline="javascript">
+		/*<![CDATA[*/
+		var msg = [[${tip}]];
+		/*]]>*/
+		if(msg.indexOf("成功")>-1){
+			$.message({
+				message:msg,
+				type:'success',
+				time:3000,
+				showClose:true
+			});
+		}else{
+			$.message({
+				message:msg,
+				type:'info',
+				time:3000,
+				showClose:true
+			});
+		}
+	</script>
+</body>
+</html>
+

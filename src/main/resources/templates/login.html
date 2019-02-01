@@ -1,0 +1,108 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PICC旅意保险出单系统登录页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta charset="utf-8">
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap.css">
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/bootstrap-ie6.css">
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/ie.css">
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/static/res/css/login.css">
+
+</head>
+<body class="body-bg">
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="brand"><img src="/static/res/img/picc-logo.gif" /> </a>
+            <div class="nav-collapse collapse">
+                <p class="navbar-text pull-right">欢迎使用 PICC湖南省分公司旅意保险出单系统</p>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+<script>
+    function logout() {
+        if (confirm("您将要退出系统并返回至登录页面，是否确定？")) {
+            location.href = '/logout';
+        }
+    }
+</script>
+<form class="login-form form-horizontal" action="/login"
+      method="post">
+    <div class="row-fluid table-login">
+        <table>
+            <tr>
+                <td colspan="2">
+                    <h2>登录</h2>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="form-font">工号</span></td>
+                <td><input type="text" style="width: 180px;" name="user.username" />
+                </td>
+            </tr>
+            <tr>
+                <td><span class="form-font">密码</span></td>
+                <td><input type="password" style="width: 180px;"
+                           name="user.password" />
+                </td>
+            </tr>
+            <!--
+            <tr>
+                <td><span class="form-font">窗口</span></td>
+                <td><input type="text" value="" name="saleSite"
+                    id="sale-site" style="width:180px;" /></td>
+            </tr>
+             -->
+            <tr style="height: 14px;">
+                <td colspan="2" style="font-size: 14px;">
+                    <span th:if="${errorMessage!=null}" style="color:red;padding-left:10px;" th:text="${errorMessage}"></span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" style="padding: 0 10px;height: 18px;">
+                    <button type="submit" class="btn btn-info span12">
+                        <strong>登&nbsp;&nbsp;录&nbsp;&nbsp;</strong><i
+                            class="icon-play icon-white"></i>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+<!--/.fluid-container-->
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="/static/res/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/res/js/bootstrap.min.js"></script>
+<!--[if lte IE 6]>
+<script type="text/javascript" src="/static/res/js/bootstrap-ie.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    $(function() {
+        if (window.parent != window) {
+            parent.location.href = "login.html";
+        }
+    });
+
+    window.onbeforeunload = function() {
+        var n = window.event.screenX - window.screenLeft;
+        var b = n > document.documentElement.scrollWidth - 20;
+        if (b && window.event.clientY < 0 || window.event.altKey) {
+            //这里可以放置你想做的操作代码
+            $.post('login/out.action');
+        }
+    };
+</script>
+</body>
+</html>

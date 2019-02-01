@@ -1,0 +1,526 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<title>个人出单</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<object classid="clsid:10946843-7507-44FE-ACE8-2B3483D179B7" id="CVR_IDCard" name="CVR_IDCard" width="0" height="0">
+	</object>
+	<link rel="stylesheet" type="text/css" href="/res/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/res/css/print.css">
+
+
+	<style media="print" type="text/css">
+		.f1 {
+			left: 20px;
+			top: 0;
+			font-size: 12px;
+		}
+
+		.f2 {
+			left: 80px;
+			top: 10px;
+			font-size: 12px;
+		}
+
+		.f3 {
+			left: 60px;
+			top: 20px;
+			font-size: 12px;
+		}
+
+		.f4 {
+			left: 190px;
+			top: 20px;
+			font-size: 12px;
+		}
+
+		.f5 {
+			left: 90px;
+			top: 30px;
+			font-size: 12px;
+		}
+
+		.f6 {
+			left: 90px;
+			top: 45px;
+			font-size: 12px;
+		}
+
+		.f7 {
+			left: 180px;
+			top: 60px;
+			font-size: 12px;
+		}
+
+		.f8 {
+			left: 180px;
+			top: 75px;
+			font-size: 12px;
+		}
+
+		.f9 {
+			left: 180px;
+			top: 90px;
+			font-size: 12px;
+		}
+
+		.f10 {
+			left: 180px;
+			top: 115px;
+			font-size: 12px;
+		}
+
+		.f11 {
+			left: 90px;
+			top: 142px;
+			font-size: 12px;
+		}
+
+		.f12 {
+			left: 200px;
+			top: 142px;
+			font-size: 12px;
+		}
+
+		.f13 {
+			left: 40px;
+			top: 210px;
+			font-size: 12px;
+		}
+
+		.f14 {
+			left: 40px;
+			top: 225px;
+			font-size: 12px;
+		}
+
+		.f15 {
+			left: 155px;
+			top: 220px;
+			font-size: 12px;
+		}
+
+		.f16 {
+			left: 20px;
+			top: 270px;
+			font-size: 12px;
+		}
+
+		.page DIV {
+			POSITION: absolute
+		}
+
+		.Noprint {
+			display: none;
+		}
+
+		.PageNext {
+			page-break-after: always;
+		}
+
+		.alink {
+			margin: 10px 0;
+			font-family: inherit;
+			font-weight: bold;
+			font-size: 17.5px;
+			color: inherit;
+			text-rendering: optimizelegibility;
+		}
+	</style>
+</head>
+
+<body class="body-bg" onload="cycle()" style="text-align:left;">
+	<object id="CertCtl" type="application/cert-reader" width="0" height="0">
+		<p style="color:#FF0000;">控件不可用，可能未正确安装控件及驱动，或者控件未启用。</p>
+	</object>
+	<div class="Noprint">
+		<div th:th:include="include/header.html"></div>
+		<div class="coverprint" id="coverprint" style="display:none;">
+			<div class="printing">
+				<div class="container-fluid">
+					<div class="row-fluid">
+						<div class="print-unit">
+							<p style="text-align: center; margin-top: 20px;">
+								打印中， 请稍等...
+							</p>
+							<div class="bar" style="width: 100%; text-align: center;">
+								<img src="/res/img/processbar.gif" width="100" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="wrapper-individual" id="wrapper">
+			<div class="container-fluid">
+				<div class="row-fluid" style="margin:0 auto;;width: 700px;">
+					<br />
+					<div class="masthead">
+						<div class="pull-right">
+							<!-- <a href="../print/initTeam_team.action">团体出单</a> -->
+							<!--<a href="print/budan.jsp">保单重打</a>-->
+						</div>
+						<h1 style="line-height: 20px;">
+							个人出单
+						</h1>
+					</div>
+					<hr>
+					<br>
+					<!-- 
+					<div>
+						<span>票&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号： <select style="width: 150px;margin-bottom: 0;" name="print.tickets"
+							 id="tickets" onchange="changeTick()">
+
+								<option value=''>
+									00182932,2人，2018-11-16 13:20:30
+								</option>
+							</select></span><span style="margin-left:3px;"></span><span>
+							<button onclick="reflush()" class="btn btn-info btn-small" style="width:55px;height:24px;">
+								获取最新
+							</button></span>
+
+					</div>
+					 -->
+					<br />
+					<span>人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数： </span>
+					<input type="number" name="custnum" id='custnum' style="width: 80px; max-width: 70px; height: 24px; line-height: 17px; padding: 0px;"
+					 value="1" />
+					<div>
+						产品类型：
+						<select style="width: 200px" name="print.product" id="potype_code">
+
+						</select>
+					</div>
+					<br />
+					<!-- 有几个人就生成几条输入信息 -->
+					<div class="Noprint" id="persons">
+						<div class="print-individual" style="height: 50px; padding: 0px;">
+							证件类型：
+							<select id='cardType1' style="width: 150px">
+								<option value="身份证">
+									身份证
+								</option>
+								<option value="02">
+									户口薄
+								</option>
+								<option value="03">
+									护照
+								</option>
+								<option value="04">
+									军人证件
+								</option>
+								<option value="05">
+									驾驶执照
+								</option>
+								<option value="06">
+									返乡证
+								</option>
+								<option value="07">
+									港澳身份证
+								</option>
+								<option value="08">
+									工号
+								</option>
+								<option value="09">
+									赴台通行证
+								</option>
+								<option value="10">
+									港澳通行证
+								</option>
+								<option value="15">
+									士兵证
+								</option>
+								<option value="25">
+									港澳居民来往内地通行证
+								</option>
+								<option value="26">
+									台湾居民来往内地通行证
+								</option>
+								<option value="31">
+									组织机构代码证
+								</option>
+								<option value="99">
+									其他
+								</option>
+							</select>
+							<span style="margin-left: 5px;"></span>证件号码：
+							<input type="text" name="cardno" id='cardNum1' style="width: 175px; height: 24px;" maxlength="23">
+							<span style="margin-left: 5px;"></span>姓名：
+							<input type="text" name="custname" id='name1' style="width: 80px; max-width: 70px; height: 24px; line-height: 17px; padding: 0px;" />
+						</div>
+					</div>
+					<div style="margin: 0 auto"></div>
+					<div class="row-fluid" style="text-align: center;">
+						<button class="btn btn-success btn-large span5" onclick="addPolicy()">
+							打印个人保单
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--打印DIV 有几个人则有几个DIV-->
+	<!-- /container-->
+	<!-- Le javascript-->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script type="text/javascript" src="/res/js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="/res/js/bootstrap.min.js"></script>
+	<!-- <script type="text/javascript" src="${pageContext.servletContext.contextPath }/res/js/print.js"></script> -->
+	<script type="text/javascript" src="/res/js/formValidatorRegex.js"></script>
+	<script type="text/javascript" src="/res/js/LodopFuncs.js"></script>
+	<!-- 
+	<object id="PrintActiveX" classid="clsid:3ede745c-4adb-42a6-ab25-5621edbdfd6b" codebase="../print/QWPrint.cab#version=1,3,8,2"
+	 style="display: none">
+	</object>
+	 -->
+	<!-- 页面需要加载的打印组件 -->
+	<object id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width="0" height="0">
+		<embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+	</object>
+	<!--[if lte IE 6]>
+    <script type="text/javascript" src="res/js/bootstrap-ie.js"></script>
+    <![endif]-->
+	<script type="text/javascript">
+		console.log("123456");
+		var ht;
+		var LODOP;
+
+		window.onbeforeunload = function () //author: 一位不愿透露姓名的无敌帅哥 
+		{
+			var n = window.event.screenX - window.screenLeft;
+			var b = n > document.documentElement.scrollWidth - 20;
+			if (b && window.event.clientY < 0 || window.event.altKey) {
+				//这里可以放置你想做的操作代码
+				$.post('login/out.action');
+			}
+		};
+
+		var rowNum = parseInt(document.querySelector('#custnum').value);//总行数
+		var currentRow = 0;//当前行数
+		var intervalObj;//自动读卡的定时执行对象
+
+		window.onload = function () {
+			 var PRINT_NAME="实达MP-360K"; 
+			  //加载LODOP打印组件
+			 var lodop = document.getElementById("LODOP_OB"); 
+			//获取打印核心对象
+			 LODOP=getLodop(lodop,document.getElementById('LODOP_EM'));
+			 //判断打印机是否存在
+			 //console.log(LODOP);
+			 if (!LODOP.SET_PRINTER_INDEXA(PRINT_NAME)) {
+			 	alert("打印机未安装！请重新检查设备连接情况！");
+			 	return;
+			 }
+			 LODOP.PRINT_INITA(10,46,289,485,"华夏游境内旅行意外伤害保险 保险单");
+			 LODOP.SET_PRINT_PAGESIZE(1, 670,1270,'picc');
+			 LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+
+			console.log("读卡方法执行");
+			intervalObj = setInterval("readCard()", 2000);//每隔3秒计算一次
+			var custnum = document.querySelector('#custnum');
+			var persons = document.querySelector('#persons');
+			ht = persons.innerHTML;
+			custnum.onchange = function (e) {
+				rowNum = parseInt(document.querySelector('#custnum').value);
+				currentRow = 0;
+				var str = '';
+				for (var i = 0; i < parseInt(this.value); i++) {
+					str += ht;
+				}
+				persons.innerHTML = str;
+
+				for (var i = 0; i < parseInt(this.value); i++) {
+					var di = document.querySelectorAll('#persons .print-individual');
+					var sel = di[i].querySelector('select');
+					sel.setAttribute("id", 'cardType' + (i + 1));
+					//console.log("sel == " + sel.id);
+					var d = di[i].querySelectorAll('input');
+					d[0].setAttribute("id", 'cardNum' + (i + 1));
+					d[1].setAttribute("id", 'name' + (i + 1));
+				}
+				//自动执行读卡方法
+				//console.log("读卡方法执行");
+				intervalObj = setInterval("readCard()", 3000);//每隔1秒计算一次
+
+			}
+		};
+
+		//读卡方法
+		function readCard() {
+			console.log("读卡。。。currentRow == " + currentRow);
+			var readCardObj = document.getElementById("CertCtl");
+			var result = readCardObj.readCert();    //驱动身份证读卡器读卡
+			var cardInfo = eval('(' + result + ')');//将JSON格式的内容 转换为JavaScript的对象
+			if (cardInfo.resultFlag == -1) {
+				//没有读到相关的身份证信息
+				return;
+			}
+			var cardNoArray = document.getElementsByName("cardno"); //获取一组名字为cardNo的组件对象
+			var personNameArray = document.getElementsByName("custname");  //获得一组名字为personName的组件对象
+			// var genderArray = document.getElementsByName("gender");  //获得一组名字为gender的组件对象
+			// var birthArray = document.getElementsByName("birth");  //获得一组名字为birth的组件对象
+			if (cardNoArray.length > 0 && currentRow < rowNum) {
+
+				//防止重复读卡
+				for(var i=0;i<cardNoArray.length;i++){
+					if(cardInfo.resultContent.certNumber==cardNoArray[i].value){
+						return;
+					}
+				}
+
+				console.log("给currentRow 赋值。。");
+				cardNoArray[currentRow].value = cardInfo.resultContent.certNumber;
+				personNameArray[currentRow].value = cardInfo.resultContent.partyName;
+				//genderArray[currentRow].value=cardInfo.resultContent.gender;
+				///birthArray[currentRow].value=cardInfo.resultContent.bornDay;
+				currentRow++;    //逐行赋值
+			} else if (currentRow == rowNum) {
+				console.log("读卡完毕。。");
+				clearInterval(intervalObj);
+			}
+		}
+
+		function addPolicy() {
+			var formData = {};
+			formData["cardType"] = "";
+			formData["cardNum"] = "";
+			formData["name"] = "";
+			var di = document.querySelectorAll('#persons .print-individual');
+			formData["custnum"] = di.length;
+			formData["productId"] = $("#potype_code").val();
+			for (var i = 0; i < di.length; i++) {
+				var sel = di[i].querySelector('select');
+				var d = di[i].querySelectorAll('input');
+				var zz = /^[a-zA-Z0-9]+$/;
+				if (d[0].value == null || d[0].value == "") {
+					alert("请输入证件号码");
+					return;
+				} else {
+					if (!zz.test(d[0].value)) {
+						alert("证件号码输入错误");
+						return;
+					}
+				}
+				console.log(zz.test(d[0].value));
+				if (d[1].value == null || d[1].value == "") {
+					alert("请输入姓名");
+					return;
+				}
+				if (i == 0) {
+					formData["cardType"] = formData["cardType"] + sel.value;
+					formData["cardNum"] = formData["cardNum"] + d[0].value;
+					formData["name"] = formData["name"] + d[1].value;
+				} else {
+					formData["cardType"] = formData["cardType"] + "," + sel.value;
+					formData["cardNum"] = formData["cardNum"] + "," + d[0].value;
+					formData["name"] = formData["name"] + "," + d[1].value;
+				}
+			}
+			$.ajax({
+				type: "POST",
+				dateType: "json",
+				url: "/system/policy/addPolicy",
+				data: formData,
+				success: function (msg) {
+					var tip='';
+					var successNum=0;
+					console.log(msg);
+					if(msg!=null&&msg.length>0){
+						for(var i=0;i<msg.length;i++){
+							var policyVo=msg[i];
+							if(policyVo.result==true){
+								++successNum;
+								print(policyVo);//打印
+							}else{
+								if(tip==''){
+									tip+=policyVo.tip;
+								}else{
+									tip+='\n';
+									tip+=policyVo.tip;
+								}
+							}
+						}
+						if(tip!=''){
+							alert(tip);
+						}
+						if(successNum==msg.length){
+							//清空
+							$("#custnum").val("1");
+							persons.innerHTML = ht;
+							var di = document.querySelectorAll('#persons .print-individual');
+							var sel = di[0].querySelector('select');
+							sel.setAttribute("id", 'cardType1');
+							var d = di[0].querySelectorAll('input');
+							d[0].setAttribute("id", 'cardNum1');
+							d[1].setAttribute("id", 'name1');
+						}
+					}else{
+						alert("出单失败");
+					}
+				},
+				error: function () {
+					alert("系统繁忙，请稍后再试");
+				}
+			})
+		}
+
+		function print(policyVo){
+		 	LODOP.ADD_PRINT_TEXT(0,30,80,16,policyVo.policy.documentNum);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(14,40,80,16,policyVo.policy.policyCode);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(29,40,80,16,policyVo.policy.product.name);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(29,175,80,16,policyVo.policy.policyNum);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(45,70,80,16,policyVo.policy.policyHolder.name);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(61,70,80,16,policyVo.policy.policyHolder.cardCode);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(75,145,80,16,policyVo.policy.product.compensat1);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(90,145,80,16,policyVo.policy.product.compensat2);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(107,145,80,16,policyVo.policy.product.compensat3);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(131,145,80,16,policyVo.policy.product.compensat4);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(158,55,80,16,policyVo.policy.premium);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(158,171,80,16,policyVo.policy.premiumTotal);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(227,8,80,16,policyVo.policy.website);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",6.8);
+		 	LODOP.ADD_PRINT_TEXT(237,136,80,16,policyVo.policy.createTime);
+		 	LODOP.SET_PRINT_STYLEA(0,"FontSize",5.8);
+		 	LODOP.PRINT();
+		 }
+
+	</script>
+	<script type="text/javascript">
+		$(function () {
+			$.ajax({
+				type: "POST",
+				dateType: "json",
+				url: "/system/product/queryProductAjax",
+				success: function (data) {
+					if (data != null) {
+						for (var i = 0; i < data.length; i++) {
+							$("select#potype_code").append("<option value=" + data[i].id + ">" + data[i].name + "(" + data[i].premium + "元)" + "</option>");
+						}
+					}
+				},
+				error: function () {
+					alert("服务繁忙，请稍后再试");
+				}
+			});
+		});
+	</script>
+
+</body>
+
+</html>
